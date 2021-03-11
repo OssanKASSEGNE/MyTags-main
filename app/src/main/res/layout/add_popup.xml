@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical" android:layout_width="match_parent"
-android:gravity = "center"
-android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/titlePopUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ajouter votre tag"
-        android:textColor="@color/purple_700"
-        android:textSize="30dp"
-        android:layout_margin="10dp"/>
-
-    <EditText
-        android:id="@+id/textTag"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:textColor="@color/purple_700"
-        android:inputType="textPersonName"
-        android:layout_margin="10dp"/>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center">
 
     <LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/ajouter_image_popup_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="123dp"
+        tools:layout_editor_absoluteY="155dp">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ajouter"
-            android:layout_margin="10dp"/>
+            android:gravity="bottom"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/annuler_popup_button"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/annuler_popup_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Annuler" />
+
+            <Button
+                android:id="@+id/ajouter_image_popup_button"
+                android:layout_width="217dp"
+                android:layout_height="wrap_content"
+                android:text="Ajouter"
+                app:rippleColor="#FFFFFF" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Annuler"
-            android:layout_margin="10dp"/>
+            android:text="Tag du média" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/textTag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="318dp"
+            tools:srcCompat="@tools:sample/avatars[0]" />
 
-
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
