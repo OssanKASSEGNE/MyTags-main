@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical" android:layout_width="match_parent"
+android:gravity = "center"
+android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/titlePopUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajouter votre tag"
+        android:textColor="@color/purple_700"
+        android:textSize="30dp"
+        android:layout_margin="10dp"/>
+
+    <EditText
+        android:id="@+id/textTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textColor="@color/purple_700"
+        android:inputType="textPersonName"
+        android:layout_margin="10dp"/>
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/ajouter_image_popup_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter"
+            android:layout_margin="10dp"/>
+
+        <Button
+            android:id="@+id/annuler_popup_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Annuler"
+            android:layout_margin="10dp"/>
+
+</LinearLayout>
+
+
+
+
+</LinearLayout>
