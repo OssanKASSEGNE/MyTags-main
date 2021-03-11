@@ -3,12 +3,21 @@ package com.example.mytags;
 import android.net.Uri;
 
 public class Media {
+    private int id;
     private String uri;
     private String mediaType;
     private String tag;
 
-    public Media(String uri, String tag){
+    public Media(int id ,String uri, String tag){
+        this.id = id;
         this.uri = uri;
+        this.mediaType = mediaType(uri);
+        this.tag = tag;
+    }
+    public Media(int id ,String uri,String mediaType, String tag){
+        this.id = id;
+        this.uri = uri;
+        this.mediaType = mediaType;
         this.mediaType = mediaType(uri);
         this.tag = tag;
     }
@@ -41,6 +50,15 @@ public class Media {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

@@ -1,15 +1,19 @@
 package com.example.mytags;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     //Button
     Button btnCharger;
     Button btnPhoto;
+    ImageView searchButton;
 
     //intent id
     private static final int PICK_IMAGE = 100;
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     Uri imageUri;
-    List<Row> lst = new ArrayList<>();
+    List<Row> currentListe = new ArrayList<>();
 
     //EditText
     EditText editTextTag ;
@@ -77,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
         this.activity = this;
 
+      
 
 
+        //Load an image
         btnCharger = (Button)findViewById(R.id.buttonCharger);
         btnCharger.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,11 +94,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Take a photo
         btnPhoto = (Button)findViewById(R.id.buttonPhoto);
         btnPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 photoIntent();
+            }
+        });
+
+        //Search media by Tag
+        searchButton = (ImageView)findViewById(R.id.imageViewSearch);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllImage();
             }
         });
 
@@ -149,6 +166,34 @@ public class MainActivity extends AppCompatActivity {
             }
 
     }
+    //Load all images from database
+    private void loadAllImage(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectAll();
+        //3 - Create Row
+
+        List<Row> liste = new ArrayList<>();
+
+        for (Media media : mediaAll) {
+            System.out.println(media);
+            Uri imageUri = Uri.parse(media.getUri());
+            liste.add(new Row(imageUri));
+
+        }
+        Integer i = liste.size();
+        showMessage(i.toString());
+       //4- affichage
+        staggeredRv = findViewById(R.id.staggered_rv);
+        manager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        staggeredRv.setLayoutManager(manager);
+        adapter = new StaggeredRecyclerAdapter(MainActivity.this,liste);
+        staggeredRv.setAdapter(adapter);
+
+    }
+
+
     /********************/
 
 
@@ -163,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
 
             imageUri = data.getData();
+
 
 
             Button okButton;
@@ -191,19 +237,28 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     currentTag = editTextTag.getText().toString();
+                    Media mediaModel;
 
                     if (!currentTag.isEmpty()) {
                         //uri
-                        lst.add(new Row(imageUri));
+                        mediaModel = new  Media(-1,imageUri.toString(), currentTag);
+
+
+                        currentListe.add(new Row(imageUri));
                         staggeredRv = findViewById(R.id.staggered_rv);
                         manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                         staggeredRv.setLayoutManager(manager);
-                        adapter = new StaggeredRecyclerAdapter(MainActivity.this, lst);
+                        adapter = new StaggeredRecyclerAdapter(MainActivity.this,currentListe);
                         staggeredRv.setAdapter(adapter);
                         popupDialog.dismiss();
                         showMessage("Tag : "+currentTag+" Ajouté");
                         //DataBase call
                         DataBaseArch dataBaseArch = new DataBaseArch(MainActivity.this);
+                        //insert
+                        boolean success = dataBaseArch.addOne(mediaModel);
+                        showMessage(imageUri.toString());
+
+
                     }
 
 
@@ -247,16 +302,21 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     currentTag = editTextTag.getText().toString();
+                    Media mediaModel;
 
                     if (!currentTag.isEmpty()) {
                         //uri
-                        lst.add(new Row(imageUri));
+                        mediaModel = new  Media(-1,imageUri.toString(), currentTag);
+
+                        currentListe.add(new Row(imageUri));
                         staggeredRv = findViewById(R.id.staggered_rv);
                         manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                         staggeredRv.setLayoutManager(manager);
-                        adapter = new StaggeredRecyclerAdapter(MainActivity.this, lst);
+                        adapter = new StaggeredRecyclerAdapter(MainActivity.this, currentListe);
                         staggeredRv.setAdapter(adapter);
                         popupDialog.dismiss();
+                        System.out.println(imageUri.toString());
+                        System.out.println(Uri.parse(imageUri.toString()));
                         showMessage("Tag : "+currentTag+" Ajouté");
                     }
 
