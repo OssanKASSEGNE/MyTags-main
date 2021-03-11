@@ -32,5 +32,5 @@ public  class DataBaseArch extends SQLiteOpenHelper {
 
     }
 
-    public boolean addOne ()
+    public boolean addOne (dqsd)
 }
