@@ -56,6 +56,7 @@ public  class DataBaseArch extends SQLiteOpenHelper {
 
     }
 
+    //List all media in table
     public List<Media> selectAll(){
         List<Media> returnList = new ArrayList<>();
         //get data fom database
@@ -85,4 +86,98 @@ public  class DataBaseArch extends SQLiteOpenHelper {
         db.close();
         return returnList;
     }
+
+    //Select All images
+    public List<Media> selectAllImages(){
+        return selectGeneric("image");
+    }
+
+
+    //Select All jpeg
+    public List<Media> selectAllPng(){
+        return selectGeneric("400");
+    }
+
+    //Select From Tags
+    public List<Media> selectFromTag(String tags){
+        List<Media> returnList = new ArrayList<>();
+        //get data fom database
+
+
+        String queryString = "SELECT * FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_TAG+" LIKE '%" + tags + "%'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString,null);
+
+        if (cursor.moveToFirst()){
+            //Loop through the result and create new media objects for each row
+            do{
+                int mediaID = cursor.getInt(0);
+                String mediaUri = cursor.getString(1);
+                String mediaType = cursor.getString(2);
+                String tag = cursor.getString(3);
+
+                //Create a new media
+                Media newMedia = new Media(mediaID,mediaUri,mediaType,tag);
+                returnList.add(newMedia);
+            }while(cursor.moveToNext()); // while we can move to new line
+        }else{
+            //failure case
+        }
+        //Close db and cursor after usage
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
+    //Delete All entries
+    public void deleteAll()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + MEDIA_TABLE);
+        db.close();
+    }
+
+    //Delete a Media
+    public void deleteMedia(String value)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + MEDIA_TABLE+ " WHERE "+COLUMN_MEDIA_URI+"='"+value+"'");
+        db.close();
+    }
+
+    //Select Généric
+    private List<Media> selectGeneric(String subcategory){
+        List<Media> returnList = new ArrayList<>();
+        //get data fom database
+
+
+        String queryString = "SELECT * FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE+" LIKE '%" + subcategory + "%'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString,null);
+
+        if (cursor.moveToFirst()){
+            //Loop through the result and create new media objects for each row
+            do{
+                int mediaID = cursor.getInt(0);
+                String mediaUri = cursor.getString(1);
+                String mediaType = cursor.getString(2);
+                String tag = cursor.getString(3);
+
+                //Create a new media
+                Media newMedia = new Media(mediaID,mediaUri,mediaType,tag);
+                returnList.add(newMedia);
+            }while(cursor.moveToNext()); // while we can move to new line
+        }else{
+            //failure case
+        }
+        //Close db and cursor after usage
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
+
+
 }
