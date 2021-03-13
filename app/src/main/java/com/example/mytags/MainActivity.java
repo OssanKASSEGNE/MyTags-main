@@ -1,7 +1,9 @@
 package com.example.mytags;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton btnAddFile;
     private FloatingActionButton btnPlus;
     private Boolean bBtnPlusClicked = false;
+    private View btnMenuTag;
 
 
     // intent pour la gallery
@@ -105,6 +108,17 @@ public class MainActivity extends AppCompatActivity {
         btnAddAudio = (FloatingActionButton) findViewById(R.id.BtnAddAudio);
         btnAddFile = (FloatingActionButton) findViewById(R.id.BtnAddFile);
         btnPlus = (FloatingActionButton) findViewById(R.id.fab);
+
+        btnMenuTag = findViewById(R.id.menu_tag);
+        btnMenuTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnMenuTag.setActivated(true);
+                Intent intent = new Intent(MainActivity.this, SearchTagsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+            }
+        });
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -207,8 +221,6 @@ public class MainActivity extends AppCompatActivity {
         // Plus button
         btnPlus.startAnimation(animBtnPlus);
     }
-
-
 
 
     /**LES INTENTS **/
@@ -402,6 +414,4 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-
 }
