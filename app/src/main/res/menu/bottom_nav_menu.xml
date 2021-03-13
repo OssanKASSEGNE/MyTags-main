@@ -7,8 +7,8 @@
     <item android:title=""
         android:enabled="false"/>
 
-    <item android:id="@+id/menu_search"
-        android:title="Search"
-        android:icon="@drawable/ic_search"/>
+    <item android:id="@+id/menu_tag"
+        android:title="My tags"
+        android:icon="@drawable/ic_tag"/>
 
 </menu>

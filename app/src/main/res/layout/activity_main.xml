@@ -26,61 +26,90 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddFile"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="68dp"
             android:backgroundTint="@color/colorPrimaryDark"
-            app:tint="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.766"
+            app:layout_constraintHorizontal_bias="0.918"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_file" />
+            app:srcCompat="@drawable/ic_add_file"
+            app:tint="@color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/BtnAddVideoFromGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="200dp"
+            android:backgroundTint="@color/yellow_pack"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.602"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add_video_gallery"
+            app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddVideo"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="132dp"
+            android:layout_marginBottom="200dp"
             android:backgroundTint="@color/yellow_pack"
-            app:tint="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.391"
+            app:layout_constraintHorizontal_bias="0.385"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_video" />
+            app:srcCompat="@drawable/ic_add_video"
+            app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddAudio"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="132dp"
-            android:clickable="true"
+            android:layout_marginBottom="144dp"
             android:backgroundTint="@color/red_pack"
-            app:tint="@color/white"
+            android:clickable="true"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.609"
+            app:layout_constraintHorizontal_bias="0.808"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_audio" />
+            app:srcCompat="@drawable/ic_add_audio"
+            app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddPhoto"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="68dp"
-            android:clickable="true"
             android:backgroundTint="@color/green_pack"
-            app:tint="@color/white"
+            android:clickable="true"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.233"
+            app:layout_constraintHorizontal_bias="0.115"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_photo" />
+            app:srcCompat="@drawable/ic_add_photo"
+            app:tint="@color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/BtnAddPhotoFromGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="144dp"
+            android:backgroundTint="@color/green_pack"
+            android:clickable="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.191"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add_photo_gallery"
+            app:tint="@color/white" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

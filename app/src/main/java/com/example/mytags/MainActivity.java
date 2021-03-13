@@ -17,10 +17,12 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -58,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     //Button
     private FloatingActionButton btnAddPhoto;
+    private FloatingActionButton btnAddPhotoFromGallery;
     private FloatingActionButton btnAddVideo;
+    private FloatingActionButton btnAddVideoFromGallery;
     private FloatingActionButton btnAddAudio;
     private FloatingActionButton btnAddFile;
     private FloatingActionButton btnPlus;
@@ -95,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Button
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.BtnAddPhoto);
+        btnAddPhotoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddPhotoFromGallery);
         btnAddVideo = (FloatingActionButton) findViewById(R.id.BtnAddVideo);
+        btnAddVideoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddVideoFromGallery);
         btnAddAudio = (FloatingActionButton) findViewById(R.id.BtnAddAudio);
         btnAddFile = (FloatingActionButton) findViewById(R.id.BtnAddFile);
         btnPlus = (FloatingActionButton) findViewById(R.id.fab);
@@ -107,10 +113,24 @@ public class MainActivity extends AppCompatActivity {
            }
         });
 
+        btnAddPhotoFromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                galerieIntent();
+            }
+        });
+
         btnAddVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Add video", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnAddVideoFromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                galerieIntent();
             }
         });
 
@@ -166,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
     private void setVisibility(Boolean clicked){
         int visibility = (clicked ? View.INVISIBLE : View.VISIBLE);
         btnAddPhoto.setVisibility(visibility);
+        btnAddPhotoFromGallery.setVisibility(visibility);
         btnAddVideo.setVisibility(visibility);
+        btnAddVideoFromGallery.setVisibility(visibility);
         btnAddAudio.setVisibility(visibility);
         btnAddFile.setVisibility(visibility);
     }
@@ -176,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
         Animation animBtnOther = (clicked ? toBottom : fromBottom);
         // Other buttons
         btnAddPhoto.startAnimation(animBtnOther);
+        btnAddPhotoFromGallery.startAnimation(animBtnOther);
         btnAddVideo.startAnimation(animBtnOther);
+        btnAddVideoFromGallery.startAnimation(animBtnOther);
         btnAddAudio.startAnimation(animBtnOther);
         btnAddFile.startAnimation(animBtnOther);
 
@@ -328,12 +352,16 @@ public class MainActivity extends AppCompatActivity {
             */
             Button okButton;
             Button cancelButton;
+            popupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             popupDialog.setContentView(R.layout.add_popup);
             LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
             View view = inflater.inflate(R.layout.add_popup, null);
-            cancelButton = (Button) popupDialog.findViewById(R.id.annuler_popup_button);
-            okButton = (Button) popupDialog.findViewById(R.id.ajouter_image_popup_button);
-           editTextTag = (EditText) view.findViewById(R.id.textTag);
+            cancelButton = (Button) popupDialog.findViewById(R.id.cancel_popup_button);
+            okButton = (Button) popupDialog.findViewById(R.id.add_image_popup_button);
+            editTextTag = (EditText) view.findViewById(R.id.textTag);
+
+            ImageView image_preview = (ImageView) popupDialog.findViewById(R.id.imagePreview);
+            image_preview.setImageURI(imageUri);
 
             //if user clicks on cancel
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -369,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
                     popupDialog.dismiss();
                 }
             });
-            popupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            //popupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             popupDialog.show();
 
         }

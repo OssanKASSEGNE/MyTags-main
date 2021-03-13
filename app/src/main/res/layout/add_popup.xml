@@ -1,57 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:gravity="center">
+    android:minHeight="400dp"
+    android:minWidth="300dp"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="123dp"
-        tools:layout_editor_absoluteY="155dp">
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+        <Button
+            android:id="@+id/add_image_popup_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:backgroundTint="@color/green_pack"
+            android:drawableLeft="@drawable/ic_plus"
+            android:drawableTint="@color/white"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Ajouter" />
 
-            <Button
-                android:id="@+id/annuler_popup_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Annuler" />
-
-            <Button
-                android:id="@+id/ajouter_image_popup_button"
-                android:layout_width="217dp"
-                android:layout_height="wrap_content"
-                android:text="Ajouter"
-                app:rippleColor="#FFFFFF" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tag du média" />
-
-        <EditText
-            android:id="@+id/textTag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="318dp"
-            tools:srcCompat="@tools:sample/avatars[0]" />
-
+        <Button
+            android:id="@+id/cancel_popup_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:backgroundTint="@color/orange_pack"
+            android:drawableLeft="@drawable/ic_cancel"
+            android:drawableTint="@color/white"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_gravity="center_vertical"
+            android:text="Annuler" />
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:srcCompat="@tools:sample/avatars"
+        android:scaleType="centerCrop"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/textTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine" />
+
+</LinearLayout>
