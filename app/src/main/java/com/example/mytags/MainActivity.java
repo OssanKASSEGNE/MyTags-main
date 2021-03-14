@@ -16,8 +16,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_AUDIO = 102;
     private static final int REQUEST_VIDEO = 103;
     private static final int REQUEST_DOCUMENT = 104;
+    private static final int CAPTURE_VIDEO = 105;
 
     //EditText
     EditText editTextTag ;
@@ -174,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
         btnAddVideoFromGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                galerieIntent();
+                recordIntent();
+
             }
         });
 
@@ -458,6 +463,13 @@ public class MainActivity extends AppCompatActivity {
         fileIntent("video/*",REQUEST_VIDEO,"Sélectionner la vidéo!");
     }
 
+    //Record video from camera
+    private void recordIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, CAPTURE_VIDEO);
+        }
+    }
 
     /********************/
     /**Return of intent management**/
@@ -500,9 +512,22 @@ public class MainActivity extends AppCompatActivity {
             fullRequest(R.id.staggered_rv,imageUri,videoUri,currentListe,"useFileFunction");
             MainActivity.this.getContentResolver().takePersistableUriPermission(videoUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
+
+        //Back from record Intent
+        if (requestCode == CAPTURE_VIDEO && resultCode == RESULT_OK) {
+            videoUri = data.getData();
+            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
+            fullRequest(R.id.staggered_rv,imageUri,videoUri,currentListe,"useFileFunction");
+        }
     }
 
     /****HELPFULL FONCTIONS*****/
+    public Uri getUriFromBitMap(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
     //Get mediaType
     public static String getMimeType(String url)
     {
@@ -657,10 +682,15 @@ public class MainActivity extends AppCompatActivity {
                 boolean success = dataBaseArch.addOne(mediaModel);
                 showMessage(""+success);
                 popupDialog.dismiss();
+                // Refresh main activity upon close of dialog box
+                Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(refresh);
+
             }
 
         });
         popupDialog.show();
+
     }
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
