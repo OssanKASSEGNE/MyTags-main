@@ -10,5 +10,9 @@
     <color name="colorPrimary">#6361F4</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="green_pack">#00916E</color>
+    <color name="beige_pack">#FEEFE5</color>
+    <color name="yellow_pack">#FFCF00</color>
+    <color name="orange_pack">#EE6123</color>
+    <color name="red_pack">#FA003F</color>
 </resources>

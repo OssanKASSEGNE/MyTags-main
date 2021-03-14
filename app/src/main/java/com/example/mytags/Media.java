@@ -3,20 +3,19 @@ package com.example.mytags;
 import android.net.Uri;
 
 public class Media {
-    private String uri;
+    private int id;
+    private String imageUri;
+    private String fileUri;
     private String mediaType;
     private String tag;
 
-    public Media(String uri, String tag){
-        this.uri = uri;
-        this.mediaType = mediaType(uri);
-        this.tag = tag;
-    }
 
-    //Get the media type
-    private String mediaType (String uri){
-        String type = uri.toString().substring(uri.toString().length() - 3);
-        return type;
+    public Media(int id ,String imageUri,String fileUri,String mediaType, String tag){
+        this.id = id;
+        this.fileUri = fileUri;
+        this.imageUri = imageUri;
+        this.mediaType = mediaType;
+        this.tag = tag;
     }
 
     public String getMediaType() {
@@ -27,8 +26,12 @@ public class Media {
         return tag;
     }
 
-    public String getUri() {
-        return uri;
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public String getFileUri() {
+        return fileUri;
     }
 
     public void setMediaType(String mediaType) {
@@ -39,14 +42,29 @@ public class Media {
         this.tag = tag;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setFileUri(String fileUri) {
+        this.fileUri = fileUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         return "Media{" +
-                "uri='" + uri + '\'' +
+                "id=" + id +
+                ", imageUri='" + imageUri + '\'' +
+                ", fileUri='" + fileUri + '\'' +
                 ", mediaType='" + mediaType + '\'' +
                 ", tag='" + tag + '\'' +
                 '}';
