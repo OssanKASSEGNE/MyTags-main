@@ -1,7 +1,9 @@
 package com.example.mytags;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -13,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -22,11 +25,17 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,19 +44,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission_group.CAMERA;
 
 public class MainActivity extends AppCompatActivity {
+    // Animation
+    private Animation rotateOpen;
+    private Animation rotateClose;
+    private Animation fromBottom;
+    private Animation toBottom;
+
     //Layout
     private RecyclerView staggeredRv;
     private StaggeredRecyclerAdapter adapter;
     private StaggeredGridLayoutManager manager;
 
     //Activity
-    public static MainActivity activity;
+    private MainActivity activity;
 
 
     //popUp
@@ -55,29 +68,36 @@ public class MainActivity extends AppCompatActivity {
     private Dialog popupDialog;
 
     //Tag
-    String currentTag ="";
+    String currentTag ="";//another change to commit
 
     //Button
-    Button btnCharger;
-    Button btnPhoto;
-    Button btnDelete;
-    Button btnImage;
-    ImageView searchButton;
+    private FloatingActionButton btnAddPhoto;
+    private FloatingActionButton btnAddPhotoFromGallery;
+    private FloatingActionButton btnAddVideo;
+    private FloatingActionButton btnAddVideoFromGallery;
+    private FloatingActionButton btnAddAudio;
+    private FloatingActionButton btnAddFile;
+    private FloatingActionButton btnPlus;
+    private Boolean bBtnPlusClicked = false;
+    private View btnMenuTag;
 
-    //intent id
+
+    // Intent Select code
     private static final int PICK_IMAGE = 100;
-    static final int REQUEST_IMAGE = 101;
-    public static final int PERMISSION_REQUEST_CODE = 200;
-
-
-    Uri imageUri;
-    List<Row> currentListe = new ArrayList<>();
+    private static final int REQUEST_IMAGE = 101;
+    private static final int REQUEST_AUDIO = 102;
+    private static final int REQUEST_VIDEO = 103;
+    private static final int REQUEST_DOCUMENT = 104;
 
     //EditText
     EditText editTextTag ;
 
-    //DATABASE
-    SQLiteDatabase mediaDataBase;
+    //Uri
+    Uri imageUri;
+    Uri audioUri;
+    Uri documentUri;
+    Uri videoUri;
+    List<Media> currentListe = new ArrayList<>();
 
 
     @Override
@@ -86,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.activity = this;
 
-        //Permissions
+        //Check all Permissions
         if(!Util.checkPermission(MainActivity.this))
         {
             Util.requestPermission(MainActivity.this);
@@ -94,61 +114,269 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "All Permissions Granted", Toast.LENGTH_SHORT).show();
         }
 
+        //Load all Media on create()
+        loadAllMedia();
 
-      
+        // Remove shadow for menu
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setBackground(null);
+        //bottomNavigationView.getMenu().getItem(2).setEnabled(false);
 
 
-        //Load an image
-        btnCharger = (Button)findViewById(R.id.buttonCharger);
-        btnCharger.setOnClickListener(new View.OnClickListener() {
+
+        // Set Animation
+        rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
+        rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
+        fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
+        toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
+
+        // Set Button
+        btnAddPhoto = (FloatingActionButton) findViewById(R.id.BtnAddPhoto);
+        btnAddPhotoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddPhotoFromGallery);
+        btnAddVideo = (FloatingActionButton) findViewById(R.id.BtnAddVideo);
+        btnAddVideoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddVideoFromGallery);
+        btnAddAudio = (FloatingActionButton) findViewById(R.id.BtnAddAudio);
+        btnAddFile = (FloatingActionButton) findViewById(R.id.BtnAddFile);
+        btnPlus = (FloatingActionButton) findViewById(R.id.fab);
+
+        btnMenuTag = findViewById(R.id.menu_tag);
+        btnMenuTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnMenuTag.setActivated(true);
+                Intent intent = new Intent(MainActivity.this, SearchTagsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+            }
+        });
+
+        btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               photoIntent();
+           }
+        });
+
+        btnAddPhotoFromGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 galerieIntent();
             }
         });
 
-        //Take a photo
-        btnPhoto = (Button)findViewById(R.id.buttonPhoto);
-        btnPhoto.setOnClickListener(new View.OnClickListener() {
+        btnAddVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                photoIntent();
+                videoIntent();
             }
         });
 
-        //Search media by Tag
-        searchButton = (ImageView)findViewById(R.id.imageViewSearch);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        btnAddVideoFromGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText tagSearch = (EditText)findViewById(R.id.tag_search_field);
-                showMessage(tagSearch.getText().toString());
-                searchWithtag(tagSearch.getText().toString());
+                galerieIntent();
             }
         });
 
-        //Show all images
-        btnImage = (Button)findViewById(R.id.buttonImage);
-        btnImage.setOnClickListener(new View.OnClickListener() {
+        btnAddAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadAllImage();
+                audioIntent();
             }
         });
 
-        //Empty DataBase Test
-        btnDelete = (Button)findViewById(R.id.buttonDelete);
-        btnDelete.setOnClickListener(new View.OnClickListener() {
+        btnAddFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteAll();
+                documentIntent();
             }
         });
+
+        btnPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddButtonClicked();
+            }
+        });
+
+
 
         popupDialog = new Dialog(this);
     }
 
-    /**Intents **/
+    /*******MANAGE THE DATABASE REQUEST*******/
+
+    //Load all media
+    private void loadAllMedia(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectAll();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load all images from database
+    private void loadAllImage(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectAllImages();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load all audio
+    private void loadAllaudio(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectAllAudio();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load all video
+    private void loadAllVideo(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectAllVideo();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load all text type
+    private void loadAllText(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectDocumentTxt();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load all application type
+    private void loadAllPdfApk(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectDocumentPdfApk();
+        //3 - Create List of media to shows
+
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer i = liste.size();
+        showMessage(i.toString() + " fichiers");
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+
+    }
+
+    //Load Files With Tag
+    private void searchWithtag(String tagSearch){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        List<Media> mediaAll = dataBaseArch.selectFromTag(tagSearch);
+        //3 - Create List of media to shows
+        List<Media> liste = new ArrayList<>(mediaAll);
+
+        Integer numberElements = liste.size();
+        if(numberElements == 0){
+            showMessage("Aucun Fichier Trouvé");
+        }else{
+            showMessage(numberElements.toString() + " fichiers");
+        }
+
+        //4- affichage
+        updateActivity(R.id.staggered_rv,liste);
+    }
+
+    //Delete All entries
+    private void deleteAll(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        dataBaseArch.deleteAll();
+        //3 - Create Row
+        updateActivity(R.id.staggered_rv,currentListe);
+    }
+
+
+    /** Animations **/
+
+    private void onAddButtonClicked() {
+        setVisibility(bBtnPlusClicked);
+        setAnimation(bBtnPlusClicked);
+        bBtnPlusClicked = !bBtnPlusClicked;
+    }
+
+    private void setVisibility(Boolean clicked){
+        int visibility = (clicked ? View.INVISIBLE : View.VISIBLE);
+        btnAddPhoto.setVisibility(visibility);
+        btnAddPhotoFromGallery.setVisibility(visibility);
+        btnAddVideo.setVisibility(visibility);
+        btnAddVideoFromGallery.setVisibility(visibility);
+        btnAddAudio.setVisibility(visibility);
+        btnAddFile.setVisibility(visibility);
+    }
+
+    private void setAnimation(Boolean clicked){
+        Animation animBtnPlus = (clicked ? rotateClose : rotateOpen);
+        Animation animBtnOther = (clicked ? toBottom : fromBottom);
+        // Other buttons
+        btnAddPhoto.startAnimation(animBtnOther);
+        btnAddPhotoFromGallery.startAnimation(animBtnOther);
+        btnAddVideo.startAnimation(animBtnOther);
+        btnAddVideoFromGallery.startAnimation(animBtnOther);
+        btnAddAudio.startAnimation(animBtnOther);
+        btnAddFile.startAnimation(animBtnOther);
+
+        // Plus button
+        btnPlus.startAnimation(animBtnPlus);
+
+        //Charge all dataBaseMedia
+
+    }
+
+
+    /**LES INTENTS **/
 
     //GALERY INTENTS
     private void galerieIntent(){
@@ -180,94 +408,58 @@ public class MainActivity extends AppCompatActivity {
     //Intent Call and Gallery Load
     private void photoIntent(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
+        // Create the File where the photo should go
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
 
-            } catch (IOException ex) {
-                // Error occurred while creating the File
+        } catch (IOException ex) {
+            // Error occurred while creating the File
 
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE);
-            }
-
-    }
-
-    //Load all images from database
-    private void loadAllImage(){
-        //1- create database helper object
-        DataBaseArch dataBaseArch = new DataBaseArch(activity);
-        //2- get all images from database in a List of Media
-        List<Media> mediaAll = dataBaseArch.selectAllImages();
-        //3 - Create Row
-
-        List<Row> liste = new ArrayList<>();
-
-        for (Media media : mediaAll) {
-            Uri imageUri = Uri.parse(media.getUri());
-            liste.add(new Row(imageUri));
         }
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
-       //4- affichage
-        staggeredRv = findViewById(R.id.staggered_rv);
-        manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        staggeredRv.setLayoutManager(manager);
-        adapter = new StaggeredRecyclerAdapter(MainActivity.this,liste);
-        staggeredRv.setAdapter(adapter);
-
-    }
-    //Load Image With Tag
-    private void searchWithtag(String tagSearch){
-        //1- create database helper object
-        DataBaseArch dataBaseArch = new DataBaseArch(activity);
-        //2- get all images from database in a List of Media
-        List<Media> mediaAll = dataBaseArch.selectFromTag(tagSearch);
-        //3 - Create Row
-        List<Row> liste = new ArrayList<>();
-
-        for (Media media : mediaAll) {
-            Uri imageUri = Uri.parse(media.getUri());
-            liste.add(new Row(imageUri));
-        }
-        Integer numberElements = liste.size();
-        if(numberElements == 0){
-            showMessage("Aucun Fichier Trouvé");
-        }else{
-            showMessage(numberElements.toString() + " fichiers");
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    "com.example.android.fileprovider",
+                    photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE);
         }
 
-        //4- affichage
-        staggeredRv = findViewById(R.id.staggered_rv);
-        manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        staggeredRv.setLayoutManager(manager);
-        adapter = new StaggeredRecyclerAdapter(MainActivity.this,liste);
-        staggeredRv.setAdapter(adapter);
     }
 
-    //Delete All entries
-    private void deleteAll(){
-        //1- create database helper object
-        DataBaseArch dataBaseArch = new DataBaseArch(activity);
-        //2- get all images from database in a List of Media
-        dataBaseArch.deleteAll();
-        //3 - Create Row
-        //TODO REFRESH SCREEN
+    //Choose a file Generic
+    private void fileIntent(String fileType, int FILE_SELECT_CODE, String message){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
+        intent.setType(fileType);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, message), FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            showMessage("Installer un FileManager");
+        }
     }
+
+    //Choose audio file
+    private void audioIntent(){
+        fileIntent("audio/*",REQUEST_AUDIO,"Sélectionner le fichier audio !");
+    }
+
+    //Choose choose document
+    private void documentIntent(){
+        fileIntent("application/*|text/*",REQUEST_DOCUMENT,"Sélectionner le document !");
+    }
+
+    //choose video
+    private void videoIntent(){
+        fileIntent("video/*",REQUEST_VIDEO,"Sélectionner la vidéo!");
+    }
+
 
     /********************/
-
-
-
-
     /**Return of intent management**/
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -275,205 +467,210 @@ public class MainActivity extends AppCompatActivity {
 
         //Back From GALLERY
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
-
             imageUri = data.getData();
-
-
-
-            Button okButton;
-            Button cancelButton;
-            //Dialog to write associate media and Tag
-            popupDialog.setContentView(R.layout.add_popup);
-            LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
-            View view = inflater.inflate(R.layout.add_popup, null);
-            cancelButton = (Button) popupDialog.findViewById(R.id.annuler_popup_button);
-            okButton = (Button) popupDialog.findViewById(R.id.ajouter_image_popup_button);
-            editTextTag = (EditText) popupDialog.findViewById(R.id.textTag);
-
-            //if user clicks on cancel
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    popupDialog.dismiss();
-                }
-            });
-            //if user click ok => save
-            // picture Uri and Tags string
-            okButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    currentTag = editTextTag.getText().toString();
-                    Media mediaModel;
-
-                    if (!currentTag.isEmpty()) {
-                        //uri
-                        String mediaType = getMimeType(MainActivity.this, imageUri);
-                        mediaModel = new  Media(-1,imageUri.toString(),mediaType, currentTag);
-
-
-                        currentListe.add(new Row(imageUri));
-                        staggeredRv = findViewById(R.id.staggered_rv);
-                        manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                        staggeredRv.setLayoutManager(manager);
-                        adapter = new StaggeredRecyclerAdapter(MainActivity.this,currentListe);
-                        staggeredRv.setAdapter(adapter);
-                        popupDialog.dismiss();
-                        showMessage("Tag : "+currentTag+" Ajouté");
-                        //DataBase call
-                        DataBaseArch dataBaseArch = new DataBaseArch(MainActivity.this);
-                        //insert
-                        boolean success = dataBaseArch.addOne(mediaModel);
-                    }
-                }
-            });
-            popupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupDialog.show();
+            fullRequest(R.id.staggered_rv,imageUri,imageUri,currentListe,"useGaleryFunction");
         }
 
-        //Back from photo
+        //Back from photo, show pop and update activity
         if (requestCode == REQUEST_IMAGE && resultCode == RESULT_OK) {
-
             imageUri = Uri.parse(currentPhotoPath);
+            fullRequest(R.id.staggered_rv,imageUri,imageUri,currentListe,"usePhotoFunction");
+        }
+        //Back from audio, show generic Audio image
+        if (requestCode == REQUEST_AUDIO && resultCode == RESULT_OK) {
+            audioUri = data.getData();
+            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/audio");
+            fullRequest(R.id.staggered_rv,imageUri,audioUri,currentListe,"useFileFunction");
+            MainActivity.this.getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+        //Back from fileExplorer
+        if (requestCode == REQUEST_DOCUMENT && resultCode == RESULT_OK) {
+            documentUri = data.getData();
 
-            Button okButton;
-            Button cancelButton;
-            //Dialog to write associate media and Tag
-            popupDialog.setContentView(R.layout.add_popup);
-            LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
-            View view = inflater.inflate(R.layout.add_popup, null);
-            cancelButton = (Button) popupDialog.findViewById(R.id.annuler_popup_button);
-            okButton = (Button) popupDialog.findViewById(R.id.ajouter_image_popup_button);
-            editTextTag = (EditText) popupDialog.findViewById(R.id.textTag);
-
-            //if user clicks on cancel
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    popupDialog.dismiss();
-                }
-            });
-            //if user click ok => save
-            // picture Uri and Tags string
-            okButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    currentTag = editTextTag.getText().toString();
-                    Media mediaModel;
-
-                    if (!currentTag.isEmpty()) {
-                        //uri
-                        String mediaType = getMimeType(imageUri.toString());
-                        mediaModel = new  Media(-1,imageUri.toString(),mediaType, currentTag);
-
-                        currentListe.add(new Row(imageUri));
-
-                            staggeredRv = findViewById(R.id.staggered_rv);
-                            manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                            staggeredRv.setLayoutManager(manager);
-                            adapter = new StaggeredRecyclerAdapter(MainActivity.this, currentListe);
-
-
-                        popupDialog.dismiss();
-                        showMessage("Tag : "+currentTag+" Ajouté");
-                        //DataBase call
-                        DataBaseArch dataBaseArch = new DataBaseArch(MainActivity.this);
-                        //insert
-                        boolean success = dataBaseArch.addOne(mediaModel);
-                    }
-                }
-            });
-            popupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupDialog.show();
-
+            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/document");
+            fullRequest(R.id.staggered_rv,imageUri,documentUri,currentListe,"useFileFunction");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                MainActivity.this.getContentResolver().takePersistableUriPermission(documentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            }
+        }
+        //Back from Video Intent
+        if (requestCode == REQUEST_VIDEO && resultCode == RESULT_OK) {
+            videoUri = data.getData();
+            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
+            fullRequest(R.id.staggered_rv,imageUri,videoUri,currentListe,"useFileFunction");
+            MainActivity.this.getContentResolver().takePersistableUriPermission(videoUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
     }
-                //Get mediaType
-                public static String getMimeType(String url)
-                {
-                    String extension = url.substring(url.lastIndexOf("."));
-                    String mimeTypeMap = MimeTypeMap.getFileExtensionFromUrl(extension);
-                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeTypeMap);
-                    return mimeType;
-                }
 
-                //Short message for successful task
-                private void showMessage (String message){
-                    Toast toast = Toast.makeText(activity,message,Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+    /****HELPFULL FONCTIONS*****/
+    //Get mediaType
+    public static String getMimeType(String url)
+    {
+        String extension = url.substring(url.lastIndexOf("."));
+        String mimeTypeMap = MimeTypeMap.getFileExtensionFromUrl(extension);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeTypeMap);
+        return mimeType;
+    }
 
-                //get MimeType for galery
-                public String getMimeType(Context context, Uri uri) {
-                    String mimeType = null;
-                    if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
-                        ContentResolver cr = context.getContentResolver();
-                        mimeType = cr.getType(uri);
+    //Short message for successful task
+    public void showMessage (String message){
+        Toast toast = Toast.makeText(activity,message,Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    //get MimeType for galery
+    public String getMimeType(Context context, Uri uri) {
+        String mimeType = null;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = context.getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
+    }
+
+    //Permission Request FUNCTIONS
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Util.PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean readAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    boolean writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+
+                    if (locationAccepted && cameraAccepted && readAccepted && writeAccepted) {
+
+                        // All Permissions Granted
                     } else {
-                        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                                .toString());
-                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                fileExtension.toLowerCase());
-                    }
-                    return mimeType;
-                }
 
-                //Permission Request FUNCTIONS
-                @Override
-                public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-                    switch (requestCode) {
-                        case Util.PERMISSION_REQUEST_CODE:
-                            if (grantResults.length > 0) {
+                        //Snackbar.make(view, "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
 
-                                boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                                boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                                boolean readAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                                boolean writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-
-                                if (locationAccepted && cameraAccepted && readAccepted && writeAccepted) {
-
-                                    // All Permissions Granted
-                                } else {
-
-                                    //Snackbar.make(view, "Permission Denied, You cannot access location data and camera.", Snackbar.LENGTH_LONG).show();
-
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-                                            showMessageOKCancel("You need to allow access to all the permissions",
-                                                    new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                                requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                                        Util.PERMISSION_REQUEST_CODE);
-                                                            }
-                                                        }
-                                                    });
-                                            return;
-                                        }
-                                    }
-
-                                }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+                                showMessageOKCancel("You need to allow access to all the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                            Util.PERMISSION_REQUEST_CODE);
+                                                }
+                                            }
+                                        });
+                                return;
                             }
+                        }
 
-
-                            break;
                     }
                 }
 
-                private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setMessage(message)
-                            .setPositiveButton("OK", okListener)
-                            .setNegativeButton("Cancel", null)
-                            .create()
-                            .show();
+
+                break;
+        }
+    }
+
+    //Update the activity with available Rows
+    public void updateActivity(int activityId, List<Media> listeRow){
+        staggeredRv = findViewById(activityId);
+        manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        staggeredRv.setLayoutManager(manager);
+        adapter = new StaggeredRecyclerAdapter(MainActivity.this, listeRow);
+        staggeredRv.setAdapter(adapter);
+        if(listeRow.size() == 0){
+            Util.showMessage(this,"Aucun fichier");
+        }else{
+            Util.showMessage(this,listeRow.size()+" fichiers sauvegardés");
+        }
+
+    }
+
+    //Create a photo and Update activity on Request
+    public void fullRequest(int activityId, Uri imageUri,Uri fileUri,List<Media> ListeRow,String chooseFunction){
+        Button okButton;
+        Button cancelButton;
+        //Dialog to write associate media and Tag
+
+        popupDialog.setContentView(R.layout.add_popup);
+        LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+        View view = inflater.inflate(R.layout.add_popup, null);
+        cancelButton = (Button) popupDialog.findViewById(R.id.cancel_popup_button);
+        okButton = (Button) popupDialog.findViewById(R.id.add_image_popup_button);
+        editTextTag = (EditText) popupDialog.findViewById(R.id.textTag);
+
+        ImageView image_preview = (ImageView) popupDialog.findViewById(R.id.imagePreview);
+        image_preview.setImageURI(imageUri);
+
+        //if user clicks on cancel
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                popupDialog.dismiss();
+            }
+        });
+        //if user click ok => save
+        // picture Uri and Tags string
+        okButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                currentTag = editTextTag.getText().toString();
+                Media mediaModel;
+               //Save Media Type
+                //Save imagePreview
+                String mediaType = "";
+                //choose the correct fonction to get mediatype
+                switch(chooseFunction) {
+                    case "usePhotoFunction":
+                        mediaType = getMimeType(imageUri.toString());
+                        break;
+                    case "useGaleryFunction":
+                        mediaType= getMimeType(MainActivity.this,imageUri);
+                        break;
+                    case "useFileFunction":
+                        mediaType= getMimeType(MainActivity.this,imageUri);
+                        break;
+                    default:
+                        mediaType = getMimeType(imageUri.toString());
                 }
+
+                mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);
+                //TODO ONclick media event
+                currentListe.add(mediaModel);
+
+                updateActivity(activityId,ListeRow);
+
+                showMessage("Tag : "+currentTag+" Ajouté");
+
+
+                //DataBase call
+                DataBaseArch dataBaseArch = new DataBaseArch(MainActivity.this);
+                //insert
+                boolean success = dataBaseArch.addOne(mediaModel);
+                showMessage(""+success);
+                popupDialog.dismiss();
+            }
+
+        });
+        popupDialog.show();
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
 }
 
 

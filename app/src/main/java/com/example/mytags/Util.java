@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.widget.Toast;
 
 
 import androidx.core.app.ActivityCompat;
@@ -11,7 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission_group.CAMERA;
-//Class qui permet de récupérer rapidement les permissions
+//Class To get and manage All permissions
 public class Util {
     public static final int PERMISSION_REQUEST_CODE = 200;
 
@@ -32,5 +33,10 @@ public class Util {
 
     }
 
+    //Short message for successful task
+    public static void showMessage (Context context ,String message){
+        Toast toast = Toast.makeText(context ,message,Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
 }

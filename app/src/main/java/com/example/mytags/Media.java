@@ -4,14 +4,16 @@ import android.net.Uri;
 
 public class Media {
     private int id;
-    private String uri;
+    private String imageUri;
+    private String fileUri;
     private String mediaType;
     private String tag;
 
 
-    public Media(int id ,String uri,String mediaType, String tag){
+    public Media(int id ,String imageUri,String fileUri,String mediaType, String tag){
         this.id = id;
-        this.uri = uri;
+        this.fileUri = fileUri;
+        this.imageUri = imageUri;
         this.mediaType = mediaType;
         this.tag = tag;
     }
@@ -24,8 +26,12 @@ public class Media {
         return tag;
     }
 
-    public String getUri() {
-        return uri;
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public String getFileUri() {
+        return fileUri;
     }
 
     public void setMediaType(String mediaType) {
@@ -36,8 +42,12 @@ public class Media {
         this.tag = tag;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setFileUri(String fileUri) {
+        this.fileUri = fileUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     public int getId() {
@@ -52,7 +62,9 @@ public class Media {
     @Override
     public String toString() {
         return "Media{" +
-                "uri='" + uri + '\'' +
+                "id=" + id +
+                ", imageUri='" + imageUri + '\'' +
+                ", fileUri='" + fileUri + '\'' +
                 ", mediaType='" + mediaType + '\'' +
                 ", tag='" + tag + '\'' +
                 '}';

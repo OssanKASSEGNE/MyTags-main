@@ -1,48 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical" android:layout_width="match_parent"
-android:gravity = "center"
-android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="400dp"
+    android:minWidth="300dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/add_image_popup_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:backgroundTint="@color/green_pack"
+            android:drawableLeft="@drawable/ic_plus"
+            android:drawableTint="@color/white"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Ajouter" />
+
+        <Button
+            android:id="@+id/cancel_popup_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:backgroundTint="@color/orange_pack"
+            android:drawableLeft="@drawable/ic_cancel"
+            android:drawableTint="@color/white"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_gravity="center_vertical"
+            android:text="Annuler" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imagePreview"
+
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:layout_weight="1"
+        tools:srcCompat="@tools:sample/avatars"
+        android:scaleType="centerCrop"/>
+
 
     <TextView
-        android:id="@+id/titlePopUp"
+        android:id="@+id/mediaTypeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ajouter votre tag"
-        android:textColor="@color/purple_700"
-        android:textSize="30dp"
-        android:layout_margin="10dp"/>
+        android:text="TextView" />
 
     <EditText
         android:id="@+id/textTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:ems="10"
-        android:textColor="@color/purple_700"
-        android:inputType="textPersonName"
-        android:layout_margin="10dp"/>
-
-    <LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/ajouter_image_popup_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ajouter"
-            android:layout_margin="10dp"/>
-
-        <Button
-            android:id="@+id/annuler_popup_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Annuler"
-            android:layout_margin="10dp"/>
-
-</LinearLayout>
-
-
-
+        android:gravity="start|top"
+        android:inputType="textMultiLine" />
 
 </LinearLayout>
