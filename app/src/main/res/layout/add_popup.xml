@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:minHeight="400dp"
     android:minWidth="300dp"
+    android:padding="5dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -57,7 +58,7 @@
         android:id="@+id/mediaTypeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="Tag" />
 
     <EditText
         android:id="@+id/textTag"

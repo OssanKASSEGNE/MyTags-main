@@ -22,8 +22,8 @@
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <com.google.android.material.chip.ChipGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="66dp"
+        android:layout_height="122dp"
         app:layout_constraintBottom_toBottomOf="@+id/row_img"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -46,7 +46,7 @@
             android:id="@+id/chip_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="4dp"
             android:gravity="center"
             app:checkedIconEnabled="false"
             app:chipBackgroundColor="@color/yellow_pack"
