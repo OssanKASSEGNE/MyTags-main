@@ -1,9 +1,7 @@
 package com.example.mytags;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -15,9 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,13 +20,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Button
     private FloatingActionButton btnAddPhoto;
-    private FloatingActionButton btnAddPhotoFromGallery;
+    private FloatingActionButton btnAddFromGallery;
     private FloatingActionButton btnAddVideo;
     private FloatingActionButton btnAddVideoFromGallery;
     private FloatingActionButton btnAddAudio;
@@ -97,7 +94,13 @@ public class MainActivity extends AppCompatActivity {
     Uri audioUri;
     Uri documentUri;
     Uri videoUri;
-    List<Media> currentListe = new ArrayList<>();
+    List<Media> currentList = new ArrayList<>();
+
+    // Search
+    AutoCompleteTextView searchView;
+
+    TextView no_tag_text;
+
 
 
     @Override
@@ -120,9 +123,6 @@ public class MainActivity extends AppCompatActivity {
         // Remove shadow for menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setBackground(null);
-        //bottomNavigationView.getMenu().getItem(2).setEnabled(false);
-
-
 
         // Set Animation
         rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Button
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.BtnAddPhoto);
-        btnAddPhotoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddPhotoFromGallery);
+        btnAddFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddFromGallery);
         btnAddVideo = (FloatingActionButton) findViewById(R.id.BtnAddVideo);
         btnAddVideoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddVideoFromGallery);
         btnAddAudio = (FloatingActionButton) findViewById(R.id.BtnAddAudio);
@@ -157,21 +157,7 @@ public class MainActivity extends AppCompatActivity {
            }
         });
 
-        btnAddPhotoFromGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                galerieIntent();
-            }
-        });
-
-        btnAddVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                videoIntent();
-            }
-        });
-
-        btnAddVideoFromGallery.setOnClickListener(new View.OnClickListener() {
+        btnAddFromGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 galerieIntent();
@@ -199,10 +185,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        String[] list = new String[] {"vacance", "vache", "passport", "chat"};
+
+        searchView = (AutoCompleteTextView) findViewById(R.id.autocomplete_text_view);
+        ArrayAdapter<String> adapter_string = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        searchView.setAdapter(adapter_string);
 
 
         popupDialog = new Dialog(this);
     }
+
 
     /*******MANAGE THE DATABASE REQUEST*******/
 
@@ -335,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         //2- get all images from database in a List of Media
         dataBaseArch.deleteAll();
         //3 - Create Row
-        updateActivity(R.id.staggered_rv,currentListe);
+        updateActivity(R.id.staggered_rv, currentList);
     }
 
 
@@ -350,9 +342,7 @@ public class MainActivity extends AppCompatActivity {
     private void setVisibility(Boolean clicked){
         int visibility = (clicked ? View.INVISIBLE : View.VISIBLE);
         btnAddPhoto.setVisibility(visibility);
-        btnAddPhotoFromGallery.setVisibility(visibility);
-        btnAddVideo.setVisibility(visibility);
-        btnAddVideoFromGallery.setVisibility(visibility);
+        btnAddFromGallery.setVisibility(visibility);
         btnAddAudio.setVisibility(visibility);
         btnAddFile.setVisibility(visibility);
     }
@@ -362,9 +352,7 @@ public class MainActivity extends AppCompatActivity {
         Animation animBtnOther = (clicked ? toBottom : fromBottom);
         // Other buttons
         btnAddPhoto.startAnimation(animBtnOther);
-        btnAddPhotoFromGallery.startAnimation(animBtnOther);
-        btnAddVideo.startAnimation(animBtnOther);
-        btnAddVideoFromGallery.startAnimation(animBtnOther);
+        btnAddFromGallery.startAnimation(animBtnOther);
         btnAddAudio.startAnimation(animBtnOther);
         btnAddFile.startAnimation(animBtnOther);
 
@@ -453,11 +441,6 @@ public class MainActivity extends AppCompatActivity {
         fileIntent("application/*|text/*",REQUEST_DOCUMENT,"Sélectionner le document !");
     }
 
-    //choose video
-    private void videoIntent(){
-        fileIntent("video/*",REQUEST_VIDEO,"Sélectionner la vidéo!");
-    }
-
 
     /********************/
     /**Return of intent management**/
@@ -468,37 +451,36 @@ public class MainActivity extends AppCompatActivity {
         //Back From GALLERY
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             imageUri = data.getData();
-            fullRequest(R.id.staggered_rv,imageUri,imageUri,currentListe,"useGaleryFunction");
+            String mediaType= getMimeType(MainActivity.this,imageUri);
+            if(mediaType.contains("video")){
+                imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
+                mediaType = "video";
+            }
+            else mediaType = "photo";
+
+            fullRequest(R.id.staggered_rv,imageUri,imageUri, currentList,mediaType);
         }
 
         //Back from photo, show pop and update activity
         if (requestCode == REQUEST_IMAGE && resultCode == RESULT_OK) {
             imageUri = Uri.parse(currentPhotoPath);
-            fullRequest(R.id.staggered_rv,imageUri,imageUri,currentListe,"usePhotoFunction");
+            fullRequest(R.id.staggered_rv, imageUri, imageUri, currentList,"photo");
         }
         //Back from audio, show generic Audio image
         if (requestCode == REQUEST_AUDIO && resultCode == RESULT_OK) {
             audioUri = data.getData();
             imageUri = Uri.parse("android.resource://com.example.mytags/drawable/audio");
-            fullRequest(R.id.staggered_rv,imageUri,audioUri,currentListe,"useFileFunction");
+            fullRequest(R.id.staggered_rv, imageUri, audioUri, currentList,"audio");
             MainActivity.this.getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
         //Back from fileExplorer
         if (requestCode == REQUEST_DOCUMENT && resultCode == RESULT_OK) {
             documentUri = data.getData();
-
             imageUri = Uri.parse("android.resource://com.example.mytags/drawable/document");
-            fullRequest(R.id.staggered_rv,imageUri,documentUri,currentListe,"useFileFunction");
+            fullRequest(R.id.staggered_rv,imageUri,documentUri, currentList,"file");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 MainActivity.this.getContentResolver().takePersistableUriPermission(documentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
-        }
-        //Back from Video Intent
-        if (requestCode == REQUEST_VIDEO && resultCode == RESULT_OK) {
-            videoUri = data.getData();
-            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
-            fullRequest(R.id.staggered_rv,imageUri,videoUri,currentListe,"useFileFunction");
-            MainActivity.this.getContentResolver().takePersistableUriPermission(videoUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
     }
 
@@ -578,21 +560,25 @@ public class MainActivity extends AppCompatActivity {
 
     //Update the activity with available Rows
     public void updateActivity(int activityId, List<Media> listeRow){
+        no_tag_text = (TextView) findViewById(R.id.no_tag_error);
+        if(currentList.isEmpty()) no_tag_text.setVisibility(View.VISIBLE);
+        else no_tag_text.setVisibility(View.INVISIBLE);
+
         staggeredRv = findViewById(activityId);
         manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         staggeredRv.setLayoutManager(manager);
         adapter = new StaggeredRecyclerAdapter(MainActivity.this, listeRow);
         staggeredRv.setAdapter(adapter);
         if(listeRow.size() == 0){
-            Util.showMessage(this,"Aucun fichier");
+            Util.showMessage(this,"No files");
         }else{
-            Util.showMessage(this,listeRow.size()+" fichiers sauvegardés");
+            Util.showMessage(this,listeRow.size()+" file saved");
         }
 
     }
 
     //Create a photo and Update activity on Request
-    public void fullRequest(int activityId, Uri imageUri,Uri fileUri,List<Media> ListeRow,String chooseFunction){
+    public void fullRequest(int activityId, Uri imageUri,Uri fileUri,List<Media> ListeRow,String mediaType){
         Button okButton;
         Button cancelButton;
         //Dialog to write associate media and Tag
@@ -623,28 +609,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 currentTag = editTextTag.getText().toString();
-                Media mediaModel;
-               //Save Media Type
-                //Save imagePreview
-                String mediaType = "";
-                //choose the correct fonction to get mediatype
-                switch(chooseFunction) {
-                    case "usePhotoFunction":
-                        mediaType = getMimeType(imageUri.toString());
-                        break;
-                    case "useGaleryFunction":
-                        mediaType= getMimeType(MainActivity.this,imageUri);
-                        break;
-                    case "useFileFunction":
-                        mediaType= getMimeType(MainActivity.this,imageUri);
-                        break;
-                    default:
-                        mediaType = getMimeType(imageUri.toString());
-                }
-
-                mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);
-                //TODO ONclick media event
-                currentListe.add(mediaModel);
+                Media mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);
+                // On click media event
+                currentList.add(mediaModel);
 
                 updateActivity(activityId,ListeRow);
 

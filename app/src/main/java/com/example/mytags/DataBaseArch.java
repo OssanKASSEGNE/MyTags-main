@@ -231,7 +231,7 @@ public  class DataBaseArch extends SQLiteOpenHelper {
         //get data fom database
 
 
-        String queryString = "SELECT DISTINCT COUNT(*) FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE+" LIKE '%" + type + "%'  AND " + COLUMN_TAG +" = '"+tag+"'";
+        String queryString = "SELECT DISTINCT COUNT(*) FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE +" LIKE '%" + type + "%'  AND " + COLUMN_TAG +" = '"+tag+"'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString,null);

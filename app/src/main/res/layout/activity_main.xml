@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,11 +12,34 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/autocomplete_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/beige_pack"
+                android:drawableStart="@drawable/ic_search"
+                android:hint="Search"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="10dp" />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/staggered_rv"
-            android:layout_width="410dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="532dp"
+            android:layout_marginTop="100dp"
+            android:paddingTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -25,60 +47,133 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.489"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="?android:attr/listDivider" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip4"
+                android:text="Filtre :"
+                android:backgroundTint="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/green_pack"
+                app:chipIcon="@drawable/ic_photo"
+                app:chipIconTint="@color/white"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/white"
+                app:checkedIconEnabled="false"
+                app:chipBackgroundColor="@color/green_pack"
+                app:chipIcon="@drawable/ic_video"
+                app:chipIconTint="@color/white"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/white"
+                app:checkedIconEnabled="false"
+                app:chipBackgroundColor="@color/green_pack"
+                app:chipIcon="@drawable/ic_add_audio"
+                app:chipIconTint="@color/white"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/white"
+                app:checkedIconEnabled="false"
+                app:chipBackgroundColor="@color/orange_pack"
+                app:chipIcon="@drawable/ic_add_file"
+                app:chipIconTint="@color/white"
+                app:chipStartPadding="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="?android:attr/listDivider" />
+
+        </com.google.android.material.chip.ChipGroup>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddFile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="68dp"
             android:backgroundTint="@color/colorPrimaryDark"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.918"
+            app:layout_constraintHorizontal_bias="0.802"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.786"
             app:srcCompat="@drawable/ic_add_file"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnAddVideoFromGallery"
+            android:id="@+id/BtnAddFromGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="200dp"
             android:backgroundTint="@color/yellow_pack"
+            android:clickable="true"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.602"
+            app:layout_constraintHorizontal_bias="0.38"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_video_gallery"
-            app:tint="@color/white" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnAddVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="200dp"
-            android:backgroundTint="@color/yellow_pack"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.385"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_video"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.786"
+            app:srcCompat="@drawable/ic_add_photo_gallery"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddAudio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="144dp"
             android:backgroundTint="@color/red_pack"
             android:clickable="true"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.808"
+            app:layout_constraintHorizontal_bias="0.597"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.786"
             app:srcCompat="@drawable/ic_add_audio"
             app:tint="@color/white" />
 
@@ -86,48 +181,17 @@
             android:id="@+id/BtnAddPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="68dp"
             android:backgroundTint="@color/green_pack"
             android:clickable="true"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.115"
+            app:layout_constraintHorizontal_bias="0.177"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.786"
             app:srcCompat="@drawable/ic_add_photo"
             app:tint="@color/white" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnAddPhotoFromGallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="144dp"
-            android:backgroundTint="@color/green_pack"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/staggered_rv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.191"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add_photo_gallery"
-            app:tint="@color/white" />
-
-        <EditText
-            android:id="@+id/tag_search_field"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="test"
-            android:ems="10"
-            android:fontFamily="@font/nunito_semibold"
-            android:hint="Rechercher"
-            android:inputType="textPersonName"
-            android:textColor="#999999"
-            app:layout_constraintBottom_toTopOf="@+id/staggered_rv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -135,10 +199,10 @@
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         app:fabCradleMargin="20dp"
-        app:fabCradleVerticalOffset="10dp"
         app:fabCradleRoundedCornerRadius="20dp"
-        android:layout_gravity="bottom">
+        app:fabCradleVerticalOffset="10dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -146,7 +210,9 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu" />
+            app:menu="@menu/bottom_nav_menu" >
+
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -154,10 +220,23 @@
         android:id="@+id/fab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_plus"
         android:backgroundTint="@color/orange_pack"
-        app:tint="@color/white"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_plus"
         app:layout_anchor="@id/bottomAppBar"
-        />
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/no_tag_error"
+        android:layout_width="wrap_content"
+        android:layout_height="211dp"
+        android:gravity="center"
+        android:text="Vous n'avez toujours pas taggué de média. Pour se faire cliquez sur le '+'"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:textSize="30dp"
+        android:elevation="-1dp"
+        app:layout_anchor="@+id/constraintLayout"
+        app:layout_anchorGravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

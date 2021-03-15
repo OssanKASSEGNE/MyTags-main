@@ -99,7 +99,7 @@
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnAddPhotoFromGallery"
+            android:id="@+id/BtnAddFromGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="144dp"
