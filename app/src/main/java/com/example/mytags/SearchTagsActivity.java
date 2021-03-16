@@ -7,11 +7,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.nfc.Tag;
 import android.os.Bundle;
-import android.telecom.Call;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
+
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -105,7 +104,6 @@ public class SearchTagsActivity extends AppCompatActivity {
     }
 
     private List<TagElement> recapTags(List<String> tags){
-        int[] countArray = new int[4];
 
         List<TagElement> tagElementList = new ArrayList<>();
 
