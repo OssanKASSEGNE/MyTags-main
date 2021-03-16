@@ -3,16 +3,10 @@ package com.example.mytags;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -41,8 +35,6 @@ public class SearchTagsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_tags);
 
         lstTag = recapTags(uniqueTags());
-
-       // lstTag.add( new TagElement("balbla", 5,2,3,5));
        // uniqueTags();
 
         mResultList = findViewById(R.id.list_tag);
@@ -96,24 +88,33 @@ public class SearchTagsActivity extends AppCompatActivity {
         List<String> tags;
         tags = dataBaseArch.selectTags();
         if(tags.size() ==0){
-            Util.showMessage(this,"Aucun fichier");
+            Util.showMessage(this,this.getString(R.string.no_File));
         }else{
-            Util.showMessage(this,tags.size()+" tags sauvegardés");
+            Util.showMessage(this,tags.size()+" "+this.getString(R.string.saved_Tags));
         }
 
         return  tags;
     }
 
     private List<TagElement> recapTags(List<String> tags){
-        int[] countArray = new int[4];
 
         List<TagElement> tagElementList = new ArrayList<>();
-
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(this);
         for(String tag : tags){
-            //1- create database helper object
-            DataBaseArch dataBaseArch = new DataBaseArch(this);
-            //2- CreateTageElement
-            tagElementList.add(new TagElement(tag,dataBaseArch.selectCount(tag,"image"),dataBaseArch.selectCount(tag,"video"),dataBaseArch.selectCount(tag,"audio"),dataBaseArch.selectCount(tag,"application")));
+            //2- CreateTagElement
+            tagElementList.add(new TagElement(tag,dataBaseArch.selectCount(tag,"image"),dataBaseArch.selectCount(tag,"video"),dataBaseArch.selectCount(tag,"audio"),dataBaseArch.selectCount(tag,"file")));
+
+
+        }
+        List<Media> medias = dataBaseArch.selectAll();
+
+       /* for (TagElement tag : tagElementList ){
+            Util.showMessage(this,tag.getTag()+" "+tag.getCountAudio()+" "+tag.getCountFile()+" "+tag.getCountPhoto()+" "+tag.getCountVideo());
+        }*/
+
+        for(Media m : medias){
+            Log.d("AllS",m.getMediaType()+" "+m.getFileUri()+" "+m.getTag()+" "+m.getImageUri()+" "+m.getId());
         }
         return tagElementList;
     }

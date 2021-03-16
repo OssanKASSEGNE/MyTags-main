@@ -107,25 +107,51 @@ public  class DataBaseArch extends SQLiteOpenHelper {
     }
 
     //Select All documents
-    public List<Media> selectDocumentTxt(){
-        return selectGeneric("text");
-    }
-    public List<Media> selectDocumentPdfApk(){
-        return selectGeneric("application");
+    public List<Media> selectAllDocument(){
+        return selectGeneric("file");
     }
 
-    //Select All jpeg
-    public List<Media> selectAllPng(){
-        return selectGeneric("png");
-    }
-
-    //Select From Tags
-    public List<Media> selectFromTag(String tags){
+    //Select Contains Tags
+    public List<Media> selectContainsTag(String tags){
         List<Media> returnList = new ArrayList<>();
         //get data fom database
 
 
         String queryString = "SELECT * FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_TAG+" LIKE '%" + tags + "%'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString,null);
+
+        if (cursor.moveToFirst()){
+            //Loop through the result and create new media objects for each row
+            do{
+                int mediaID = cursor.getInt(0);
+                String mediaImageUri = cursor.getString(1);
+                String mediaFileUri = cursor.getString(2);
+                String mediaType = cursor.getString(3);
+                String tag = cursor.getString(4);
+
+                //Create a new media
+                Media newMedia = new Media(mediaID,mediaImageUri,mediaFileUri,mediaType,tag);
+                returnList.add(newMedia);
+            }while(cursor.moveToNext()); // while we can move to new line
+        }else{
+            //failure case
+        }
+        //Close db and cursor after usage
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
+    //Select From exact Tag
+
+    public List<Media> selectExactTag(String tags){
+        List<Media> returnList = new ArrayList<>();
+        //get data fom database
+
+
+        String queryString = "SELECT * FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_TAG +" = '"+tags+"'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString,null);
@@ -161,10 +187,10 @@ public  class DataBaseArch extends SQLiteOpenHelper {
     }
 
     //Delete a Media
-    public void deleteMedia(String value)
+    public void deleteMedia(String fileUri)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + MEDIA_TABLE+ " WHERE "+COLUMN_MEDIA_FILE_URI+"='"+value+"'");
+        db.execSQL("DELETE FROM " + MEDIA_TABLE+ " WHERE "+COLUMN_MEDIA_FILE_URI+"='"+fileUri+"'");
         db.close();
     }
 
@@ -246,6 +272,14 @@ public  class DataBaseArch extends SQLiteOpenHelper {
 
     db.close();
     return occurence;
+    }
+
+    //Update Tag of a media
+    public void updateTagViaUri(String tag,String fileUri)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + MEDIA_TABLE+ " SET "+COLUMN_TAG+ " = '"+tag+"'" + " WHERE "+COLUMN_MEDIA_FILE_URI+" = '"+fileUri+"'");
+        db.close();
     }
 
 }

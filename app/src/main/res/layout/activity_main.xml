@@ -21,17 +21,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/autocomplete_text_view"
+
+            <SearchView
+                android:id="@+id/search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="43dp"
                 android:background="@color/beige_pack"
                 android:drawableStart="@drawable/ic_search"
                 android:hint="Search"
-                android:imeOptions="actionNext"
+
                 android:inputType="text"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="10dp" />
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -66,61 +68,74 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip4"
-                android:text="Filtre :"
+                android:text="Filtre:"
                 android:backgroundTint="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_photo"
+                android:id="@+id/chip_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="5"
+                android:text=""
+                android:textColor="@color/white"
+                app:checkedIconEnabled="false"
+                app:chipBackgroundColor="@color/orange_pack"
+                app:chipIcon="@drawable/ic_home"
+                app:chipIconTint="@color/white"
+               />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
                 android:textColor="@color/white"
                 app:chipBackgroundColor="@color/green_pack"
                 app:chipIcon="@drawable/ic_photo"
                 app:chipIconTint="@color/white"
-                app:chipStartPadding="10dp" />
+                />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="5"
+                android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
                 app:chipBackgroundColor="@color/green_pack"
                 app:chipIcon="@drawable/ic_video"
                 app:chipIconTint="@color/white"
-                app:chipStartPadding="10dp" />
+               />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_audio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="5"
+                android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
                 app:chipBackgroundColor="@color/green_pack"
                 app:chipIcon="@drawable/ic_add_audio"
                 app:chipIconTint="@color/white"
-                app:chipStartPadding="10dp" />
+               />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="5"
+                android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
                 app:chipBackgroundColor="@color/orange_pack"
                 app:chipIcon="@drawable/ic_add_file"
                 app:chipIconTint="@color/white"
-                app:chipStartPadding="10dp" />
+                />
 
             <View
                 android:layout_width="match_parent"
@@ -138,10 +153,10 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.802"
+            app:layout_constraintHorizontal_bias="0.771"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.786"
+            app:layout_constraintVertical_bias="0.783"
             app:srcCompat="@drawable/ic_add_file"
             app:tint="@color/white" />
 
@@ -154,10 +169,10 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.38"
+            app:layout_constraintHorizontal_bias="0.488"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.786"
+            app:layout_constraintVertical_bias="0.783"
             app:srcCompat="@drawable/ic_add_photo_gallery"
             app:tint="@color/white" />
 
@@ -170,11 +185,27 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.597"
+            app:layout_constraintHorizontal_bias="0.631"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.786"
+            app:layout_constraintVertical_bias="0.783"
             app:srcCompat="@drawable/ic_add_audio"
+            app:tint="@color/white" />
+
+        <!--changer Icone!-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/BtnAddVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.344"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.784"
+            app:srcCompat="@drawable/ic_add_video"
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -186,10 +217,10 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.177"
+            app:layout_constraintHorizontal_bias="0.211"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.786"
+            app:layout_constraintVertical_bias="0.783"
             app:srcCompat="@drawable/ic_add_photo"
             app:tint="@color/white" />
 

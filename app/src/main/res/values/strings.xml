@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">APPV3</string>
+    <string name="app_name">MediaManagerV1</string>
+    <string name="no_type">MediaManagerV1</string>
+    <string name="openFileWith">Ouvrir le fichier avec </string>
+    <string name="no_File">Aucun Fichier</string>
+    <string name="saved_Tags">tags sauvegardés</string>
+    <string name="delete">Confirmer la suppression du fichier</string>
+    <string name="accept">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="all_Permission_ok">Autorisations Reçues</string>
 </resources>

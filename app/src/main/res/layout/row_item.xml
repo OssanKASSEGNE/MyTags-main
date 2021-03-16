@@ -8,66 +8,78 @@
     android:padding="2px">
 
 
-    <ImageView
-        android:id="@+id/row_img"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
 
-    <com.google.android.material.chip.ChipGroup
-        android:layout_width="66dp"
-        android:layout_height="122dp"
-        app:layout_constraintBottom_toBottomOf="@+id/row_img"
-        app:layout_constraintStart_toStartOf="parent">
+        <ImageView
+            android:id="@+id/row_img"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_remove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            app:checkedIconEnabled="false"
-            app:chipBackgroundColor="@color/red_pack"
-            app:chipEndPadding="0dp"
-            app:chipIcon="@drawable/ic_delete"
-            app:chipIconTint="@color/white"
-            app:closeIconEndPadding="0dp"
-            app:iconStartPadding="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:gravity="center"
-            app:checkedIconEnabled="false"
-            app:chipBackgroundColor="@color/yellow_pack"
-            app:chipEndPadding="0dp"
-            app:chipIcon="@drawable/ic_edit"
-            app:chipIconTint="@color/white"
-            app:closeIconEndPadding="0dp"
-            app:iconStartPadding="10dp" />
-    </com.google.android.material.chip.ChipGroup>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxWidth="500dp"
+                android:textColor="@color/white"
+                app:checkedIconEnabled="false"
+                app:chipIconTint="@color/white"
+                app:iconStartPadding="10dp" />
 
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:gravity="center"
-        android:textColor="@color/white"
-        app:checkedIconEnabled="false"
-        app:chipIconTint="@color/white"
-        app:iconStartPadding="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_remove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=" delete"
+                    android:textColor="@color/white"
+                    app:checkedIconEnabled="false"
+                    app:chipBackgroundColor="@color/red_pack"
+                    app:chipEndPadding="0dp"
+                    android:layout_margin="5px"
+                    app:chipIcon="@drawable/ic_delete"
+                    app:chipIconTint="@color/white"
+                    app:closeIconEndPadding="0dp"
+                    app:iconStartPadding="10dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:gravity="center"
+                    android:text="editer"
+                    android:layout_margin="5px"
+                    app:checkedIconEnabled="false"
+                    app:chipBackgroundColor="@color/yellow_pack"
+                    app:chipEndPadding="0dp"
+                    app:chipIcon="@drawable/ic_edit"
+                    app:chipIconTint="@color/white"
+                    app:closeIconEndPadding="0dp"
+                    app:iconStartPadding="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

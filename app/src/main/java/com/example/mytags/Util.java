@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission_group.CAMERA;
-//Class To get and manage All permissions
+//Class To get and manage All permissions and use full function across multiple java files
 public class Util {
     public static final int PERMISSION_REQUEST_CODE = 200;
 
@@ -38,5 +43,7 @@ public class Util {
         Toast toast = Toast.makeText(context ,message,Toast.LENGTH_SHORT);
         toast.show();
     }
+
+
 
 }

@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -28,10 +29,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -56,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     private StaggeredRecyclerAdapter adapter;
     private StaggeredGridLayoutManager manager;
 
+    //View
+    SearchView searchBar;
+
     //Activity
     private MainActivity activity;
 
@@ -71,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton btnAddPhoto;
     private FloatingActionButton btnAddFromGallery;
     private FloatingActionButton btnAddVideo;
-    private FloatingActionButton btnAddVideoFromGallery;
     private FloatingActionButton btnAddAudio;
     private FloatingActionButton btnAddFile;
     private FloatingActionButton btnPlus;
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_AUDIO = 102;
     private static final int REQUEST_VIDEO = 103;
     private static final int REQUEST_DOCUMENT = 104;
+    private static final int CAPTURE_VIDEO = 105;
 
     //EditText
     EditText editTextTag ;
@@ -96,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
     Uri videoUri;
     List<Media> currentList = new ArrayList<>();
 
-    // Search
-    AutoCompleteTextView searchView;
 
     TextView no_tag_text;
 
@@ -114,11 +118,37 @@ public class MainActivity extends AppCompatActivity {
         {
             Util.requestPermission(MainActivity.this);
         }else {
-            Toast.makeText(this, "All Permissions Granted", Toast.LENGTH_SHORT).show();
+           Util.showMessage(this,this.getString(R.string.all_Permission_ok));
         }
 
-        //Load all Media on create()
-        loadAllMedia();
+        //Take result from an intent coming from click on a chip, get the value and call dataBase
+        Bundle extras = getIntent().getExtras();
+        if (extras!=null) {
+            String value = extras.getString("value");
+            String [] result = value.split(" ");
+            //if code is Tag => use value to search Tag
+            if(result[1].equals("SEARCH_TAG")){
+                searchWithtag(result[0]);
+            }
+            //delete the file via Uri sent from adapter
+            if(result[1].equals("DELETE_TAG")){
+                deleteSelected(result[0]);
+                //refresh
+                Util.showMessage(this,"Media deleted");
+                loadAllMedia();
+            }
+            //Update a tag
+            if(result[1].equals("UPDATE_TAG")){
+                updateTag(result[0],result[2]);
+                //refresh
+                Util.showMessage(this,"Tag updated");
+                loadAllMedia();
+            }
+        }else{
+            //Load all Media on create()
+            loadAllMedia();
+        }
+
 
         // Remove shadow for menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
@@ -134,11 +164,18 @@ public class MainActivity extends AppCompatActivity {
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.BtnAddPhoto);
         btnAddFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddFromGallery);
         btnAddVideo = (FloatingActionButton) findViewById(R.id.BtnAddVideo);
-        btnAddVideoFromGallery = (FloatingActionButton) findViewById(R.id.BtnAddVideoFromGallery);
         btnAddAudio = (FloatingActionButton) findViewById(R.id.BtnAddAudio);
         btnAddFile = (FloatingActionButton) findViewById(R.id.BtnAddFile);
         btnPlus = (FloatingActionButton) findViewById(R.id.fab);
 
+        //Set chips
+        Chip chipHome = (Chip) findViewById(R.id.chip_home);
+        Chip chipFile = (Chip) findViewById(R.id.chip_file);
+        Chip chipAudio = (Chip) findViewById(R.id.chip_audio);
+        Chip chipVideo = (Chip) findViewById(R.id.chip_video);
+        Chip chipImage = (Chip) findViewById(R.id.chip_image);
+
+        //Onclick Buttons
         btnMenuTag = findViewById(R.id.menu_tag);
         btnMenuTag.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,16 +189,17 @@ public class MainActivity extends AppCompatActivity {
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
            @Override
-           public void onClick(View v) {
-               photoIntent();
-           }
+           public void onClick(View v) { photoIntent(); }
         });
 
         btnAddFromGallery.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                galerieIntent();
-            }
+            public void onClick(View v) { galerieIntent(); }
+        });
+
+        btnAddVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {recordIntent();}
         });
 
         btnAddAudio.setOnClickListener(new View.OnClickListener() {
@@ -185,11 +223,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        String[] list = new String[] {"vacance", "vache", "passport", "chat"};
+        //Onclick CHips
+        chipHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllMedia();
+            }
+        });
+        chipAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllaudio();
+            }
+        });
+        chipFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllDocuments();
+            }
+        });
+        chipVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllVideo();
+            }
+        });
+        chipImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllImage();
+            }
+        });
 
-        searchView = (AutoCompleteTextView) findViewById(R.id.autocomplete_text_view);
-        ArrayAdapter<String> adapter_string = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        searchView.setAdapter(adapter_string);
+        //SearchBar implementation
+       searchBar = (SearchView) findViewById(R.id.search);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                             @Override
+                                             public boolean onQueryTextSubmit(String query) {
+                                                 searchWithtag(query);
+                                                 return false;
+                                             }
+
+                                             @Override
+                                             public boolean onQueryTextChange(String newText) {
+                                                 return false;
+                                             }
+                                         });
 
 
         popupDialog = new Dialog(this);
@@ -205,14 +284,9 @@ public class MainActivity extends AppCompatActivity {
         //2- get all images from database in a List of Media
         List<Media> mediaAll = dataBaseArch.selectAll();
         //3 - Create List of media to shows
-
         List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
-
     }
 
     //Load all images from database
@@ -222,11 +296,7 @@ public class MainActivity extends AppCompatActivity {
         //2- get all images from database in a List of Media
         List<Media> mediaAll = dataBaseArch.selectAllImages();
         //3 - Create List of media to shows
-
         List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
 
@@ -241,9 +311,6 @@ public class MainActivity extends AppCompatActivity {
         //3 - Create List of media to shows
 
         List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
 
@@ -256,66 +323,38 @@ public class MainActivity extends AppCompatActivity {
         //2- get all images from database in a List of Media
         List<Media> mediaAll = dataBaseArch.selectAllVideo();
         //3 - Create List of media to shows
-
         List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
-
     }
 
-    //Load all text type
-    private void loadAllText(){
+    //Load all Documents type
+    private void loadAllDocuments(){
         //1- create database helper object
         DataBaseArch dataBaseArch = new DataBaseArch(activity);
         //2- get all images from database in a List of Media
-        List<Media> mediaAll = dataBaseArch.selectDocumentTxt();
+        List<Media> mediaAll = dataBaseArch.selectAllDocument();
         //3 - Create List of media to shows
-
         List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
-
     }
 
-    //Load all application type
-    private void loadAllPdfApk(){
-        //1- create database helper object
-        DataBaseArch dataBaseArch = new DataBaseArch(activity);
-        //2- get all images from database in a List of Media
-        List<Media> mediaAll = dataBaseArch.selectDocumentPdfApk();
-        //3 - Create List of media to shows
-
-        List<Media> liste = new ArrayList<>(mediaAll);
-
-        Integer i = liste.size();
-        showMessage(i.toString() + " fichiers");
-        //4- affichage
-        updateActivity(R.id.staggered_rv,liste);
-
-    }
 
     //Load Files With Tag
     private void searchWithtag(String tagSearch){
         //1- create database helper object
         DataBaseArch dataBaseArch = new DataBaseArch(activity);
         //2- get all images from database in a List of Media
-        List<Media> mediaAll = dataBaseArch.selectFromTag(tagSearch);
+        List<Media> mediaAll = dataBaseArch.selectExactTag(tagSearch);
         //3 - Create List of media to shows
         List<Media> liste = new ArrayList<>(mediaAll);
-
         Integer numberElements = liste.size();
         if(numberElements == 0){
-            showMessage("Aucun Fichier Trouvé");
+            Util.showMessage(MainActivity.this,"Aucun Fichier Trouvé");
         }else{
-            showMessage(numberElements.toString() + " fichiers");
+            Util.showMessage(MainActivity.this,numberElements.toString() + " fichiers");
         }
-
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
     }
@@ -326,10 +365,22 @@ public class MainActivity extends AppCompatActivity {
         DataBaseArch dataBaseArch = new DataBaseArch(activity);
         //2- get all images from database in a List of Media
         dataBaseArch.deleteAll();
-        //3 - Create Row
-        updateActivity(R.id.staggered_rv, currentList);
+    }
+    //Delete Selected Media
+    private void deleteSelected(String fileUri){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        dataBaseArch.deleteMedia(fileUri);
     }
 
+    //Update a tag
+    private void updateTag(String tag ,String fileUri){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(activity);
+        //2- get all images from database in a List of Media
+        dataBaseArch.updateTagViaUri(tag ,fileUri);
+    }
 
     /** Animations **/
 
@@ -342,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
     private void setVisibility(Boolean clicked){
         int visibility = (clicked ? View.INVISIBLE : View.VISIBLE);
         btnAddPhoto.setVisibility(visibility);
+        btnAddVideo.setVisibility(visibility);
         btnAddFromGallery.setVisibility(visibility);
         btnAddAudio.setVisibility(visibility);
         btnAddFile.setVisibility(visibility);
@@ -352,9 +404,11 @@ public class MainActivity extends AppCompatActivity {
         Animation animBtnOther = (clicked ? toBottom : fromBottom);
         // Other buttons
         btnAddPhoto.startAnimation(animBtnOther);
+        btnAddVideo.startAnimation(animBtnOther);
         btnAddFromGallery.startAnimation(animBtnOther);
         btnAddAudio.startAnimation(animBtnOther);
         btnAddFile.startAnimation(animBtnOther);
+
 
         // Plus button
         btnPlus.startAnimation(animBtnPlus);
@@ -427,7 +481,15 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, message), FILE_SELECT_CODE);
         } catch (android.content.ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
-            showMessage("Installer un FileManager");
+            Util.showMessage(MainActivity.this,"Installer un FileManager");
+        }
+    }
+
+    //Record video from camera
+    private void recordIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, CAPTURE_VIDEO);
         }
     }
 
@@ -442,6 +504,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     /********************/
     /**Return of intent management**/
 
@@ -450,21 +513,22 @@ public class MainActivity extends AppCompatActivity {
 
         //Back From GALLERY
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
+            Uri locationUri = data.getData();
             imageUri = data.getData();
             String mediaType= getMimeType(MainActivity.this,imageUri);
             if(mediaType.contains("video")){
                 imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
                 mediaType = "video";
             }
-            else mediaType = "photo";
+            else mediaType = "image";
 
-            fullRequest(R.id.staggered_rv,imageUri,imageUri, currentList,mediaType);
+            fullRequest(R.id.staggered_rv,imageUri,locationUri, currentList,mediaType);
         }
 
         //Back from photo, show pop and update activity
         if (requestCode == REQUEST_IMAGE && resultCode == RESULT_OK) {
             imageUri = Uri.parse(currentPhotoPath);
-            fullRequest(R.id.staggered_rv, imageUri, imageUri, currentList,"photo");
+            fullRequest(R.id.staggered_rv, imageUri, imageUri, currentList,"image");
         }
         //Back from audio, show generic Audio image
         if (requestCode == REQUEST_AUDIO && resultCode == RESULT_OK) {
@@ -482,23 +546,18 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.getContentResolver().takePersistableUriPermission(documentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
         }
+        //Back from record Intent
+        if (requestCode == CAPTURE_VIDEO && resultCode == RESULT_OK) {
+            videoUri = data.getData();
+            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/video");
+            fullRequest(R.id.staggered_rv,imageUri,videoUri,currentList,"video");
+        }
     }
 
     /****HELPFULL FONCTIONS*****/
     //Get mediaType
-    public static String getMimeType(String url)
-    {
-        String extension = url.substring(url.lastIndexOf("."));
-        String mimeTypeMap = MimeTypeMap.getFileExtensionFromUrl(extension);
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeTypeMap);
-        return mimeType;
-    }
 
-    //Short message for successful task
-    public void showMessage (String message){
-        Toast toast = Toast.makeText(activity,message,Toast.LENGTH_SHORT);
-        toast.show();
-    }
+
 
     //get MimeType for galery
     public String getMimeType(Context context, Uri uri) {
@@ -560,20 +619,19 @@ public class MainActivity extends AppCompatActivity {
 
     //Update the activity with available Rows
     public void updateActivity(int activityId, List<Media> listeRow){
-        no_tag_text = (TextView) findViewById(R.id.no_tag_error);
-        if(currentList.isEmpty()) no_tag_text.setVisibility(View.VISIBLE);
-        else no_tag_text.setVisibility(View.INVISIBLE);
-
         staggeredRv = findViewById(activityId);
-        manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        manager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         staggeredRv.setLayoutManager(manager);
         adapter = new StaggeredRecyclerAdapter(MainActivity.this, listeRow);
         staggeredRv.setAdapter(adapter);
         if(listeRow.size() == 0){
             Util.showMessage(this,"No files");
         }else{
-            Util.showMessage(this,listeRow.size()+" file saved");
+            Util.showMessage(this,listeRow.size()+" file(s) saved");
         }
+        no_tag_text = (TextView) findViewById(R.id.no_tag_error);
+        if(currentList.isEmpty()) no_tag_text.setVisibility(View.VISIBLE);
+        else no_tag_text.setVisibility(View.INVISIBLE);
 
     }
 
@@ -597,33 +655,30 @@ public class MainActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 popupDialog.dismiss();
             }
         });
         //if user click ok => save
         // picture Uri and Tags string
         okButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 currentTag = editTextTag.getText().toString();
-                Media mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);
-                // On click media event
+                Media mediaModel;
+
+                mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);
+                //TODO ONclick media event
                 currentList.add(mediaModel);
-
-                updateActivity(activityId,ListeRow);
-
-                showMessage("Tag : "+currentTag+" Ajouté");
-
-
                 //DataBase call
                 DataBaseArch dataBaseArch = new DataBaseArch(MainActivity.this);
                 //insert
                 boolean success = dataBaseArch.addOne(mediaModel);
-                showMessage(""+success);
+                if(success){
+                   Util.showMessage(MainActivity.this,"Tag : "+currentTag+" Ajouté");
+                }
                 popupDialog.dismiss();
+                loadAllMedia();
+
             }
 
         });
