@@ -68,23 +68,31 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip4"
-                android:text="Filtre:"
-                android:backgroundTint="@color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:padding="0dp"
+                android:text="Filtre:"
+                android:textSize="10dp"
+                app:chipEndPadding="0dp"
+                app:chipStartPadding="0dp"
+                app:closeIconEndPadding="0dp"
+                app:closeIconStartPadding="0dp"
+                app:textEndPadding="0dp"
+                app:textStartPadding="0dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/orange_pack"
-                app:chipIcon="@drawable/ic_home"
+                app:chipBackgroundColor="@color/green_pack"
+                app:chipEndPadding="0dp"
+                app:chipIcon="@drawable/ic_reset"
                 app:chipIconTint="@color/white"
-               />
+                app:textEndPadding="0dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_image"
@@ -93,10 +101,10 @@
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/white"
-                app:chipBackgroundColor="@color/green_pack"
+                app:chipBackgroundColor="@color/grey"
                 app:chipIcon="@drawable/ic_photo"
                 app:chipIconTint="@color/white"
-                />
+                app:iconStartPadding="5dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_video"
@@ -106,10 +114,10 @@
                 android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/green_pack"
+                app:chipBackgroundColor="@color/grey"
                 app:chipIcon="@drawable/ic_video"
                 app:chipIconTint="@color/white"
-               />
+                app:iconStartPadding="5dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_audio"
@@ -119,10 +127,10 @@
                 android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/green_pack"
+                app:chipBackgroundColor="@color/grey"
                 app:chipIcon="@drawable/ic_add_audio"
                 app:chipIconTint="@color/white"
-               />
+                app:iconStartPadding="5dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_file"
@@ -132,10 +140,10 @@
                 android:text=""
                 android:textColor="@color/white"
                 app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/orange_pack"
+                app:chipBackgroundColor="@color/grey"
                 app:chipIcon="@drawable/ic_add_file"
                 app:chipIconTint="@color/white"
-                />
+                app:iconStartPadding="5dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -241,7 +249,7 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu" >
+            app:menu="@menu/bottom_nav_menu">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
@@ -251,8 +259,8 @@
         android:id="@+id/fab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/orange_pack"
         android:layout_gravity="center"
+        android:backgroundTint="@color/orange_pack"
         android:src="@drawable/ic_plus"
         app:layout_anchor="@id/bottomAppBar"
         app:tint="@color/white" />
@@ -261,12 +269,12 @@
         android:id="@+id/no_tag_error"
         android:layout_width="wrap_content"
         android:layout_height="211dp"
+        android:elevation="-1dp"
         android:gravity="center"
         android:text="Vous n'avez toujours pas taggué de média. Pour se faire cliquez sur le '+'"
         android:textAlignment="center"
-        android:visibility="invisible"
         android:textSize="30dp"
-        android:elevation="-1dp"
+        android:visibility="invisible"
         app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="center" />
 

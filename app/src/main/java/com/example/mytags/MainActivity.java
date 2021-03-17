@@ -102,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
     Uri videoUri;
     List<Media> currentList = new ArrayList<>();
 
+    // Chip
+    Chip chipHome;
+    Chip chipFile;
+    Chip chipAudio;
+    Chip chipVideo;
+    Chip chipImage;
 
     TextView no_tag_text;
 
@@ -169,11 +175,11 @@ public class MainActivity extends AppCompatActivity {
         btnPlus = (FloatingActionButton) findViewById(R.id.fab);
 
         //Set chips
-        Chip chipHome = (Chip) findViewById(R.id.chip_home);
-        Chip chipFile = (Chip) findViewById(R.id.chip_file);
-        Chip chipAudio = (Chip) findViewById(R.id.chip_audio);
-        Chip chipVideo = (Chip) findViewById(R.id.chip_video);
-        Chip chipImage = (Chip) findViewById(R.id.chip_image);
+        chipHome = (Chip) findViewById(R.id.chip_home);
+        chipFile = (Chip) findViewById(R.id.chip_file);
+        chipAudio = (Chip) findViewById(R.id.chip_audio);
+        chipVideo = (Chip) findViewById(R.id.chip_video);
+        chipImage = (Chip) findViewById(R.id.chip_image);
 
         //Onclick Buttons
         btnMenuTag = findViewById(R.id.menu_tag);
@@ -186,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) { photoIntent(); }
@@ -223,37 +228,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Onclick CHips
+        //Onclick Chips
         chipHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DataBaseArch dataBaseArch = new DataBaseArch(activity);
+                allChipDisabled();
+                Chip chip = (Chip) v;
+                chip.setChipBackgroundColorResource(R.color.green_pack);
+                chipImage.setText(String.valueOf(dataBaseArch.selectCount("", "image")));
+                chipVideo.setText(String.valueOf(dataBaseArch.selectCount("", "video")));
+                chipAudio.setText(String.valueOf(dataBaseArch.selectCount("", "audio")));
+                chipFile.setText(String.valueOf(dataBaseArch.selectCount("", "file")));
+
                 loadAllMedia();
             }
         });
         chipAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                allChipDisabled();
+                Chip chip = (Chip) v;
+                chip.setChipBackgroundColorResource(R.color.green_pack);
                 loadAllaudio();
             }
         });
         chipFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                allChipDisabled();
+                Chip chip = (Chip) v;
+                chip.setChipBackgroundColorResource(R.color.green_pack);
                 loadAllDocuments();
             }
         });
         chipVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                allChipDisabled();
+                Chip chip = (Chip) v;
+                chip.setChipBackgroundColorResource(R.color.green_pack);
                 loadAllVideo();
             }
         });
         chipImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                allChipDisabled();
+                Chip chip = (Chip) v;
+                chip.setChipBackgroundColorResource(R.color.green_pack);
                 loadAllImage();
             }
         });
+
+        chipHome.callOnClick();
+
 
         //SearchBar implementation
        searchBar = (SearchView) findViewById(R.id.search);
@@ -261,11 +290,38 @@ public class MainActivity extends AppCompatActivity {
                                              @Override
                                              public boolean onQueryTextSubmit(String query) {
                                                  searchWithtag(query);
+                                                 DataBaseArch dataBaseArch = new DataBaseArch(activity);
+                                                 allChipDisabled();
+                                                 chipHome.setChipBackgroundColorResource(R.color.green_pack);
+                                                 chipImage.setText(String.valueOf(dataBaseArch.selectCount(query, "image")));
+                                                 chipVideo.setText(String.valueOf(dataBaseArch.selectCount(query, "video")));
+                                                 chipAudio.setText(String.valueOf(dataBaseArch.selectCount(query, "audio")));
+                                                 chipFile.setText(String.valueOf(dataBaseArch.selectCount(query, "file")));
                                                  return false;
                                              }
 
                                              @Override
-                                             public boolean onQueryTextChange(String newText) {
+                                             public boolean onQueryTextChange(String query) {
+                                                 DataBaseArch dataBaseArch = new DataBaseArch(activity);
+
+                                                 if(query.isEmpty()){
+                                                     loadAllMedia();
+                                                     chipHome.setChipBackgroundColorResource(R.color.green_pack);
+                                                     chipImage.setText(String.valueOf(dataBaseArch.selectCount("", "image")));
+                                                     chipVideo.setText(String.valueOf(dataBaseArch.selectCount("", "video")));
+                                                     chipAudio.setText(String.valueOf(dataBaseArch.selectCount("", "audio")));
+                                                     chipFile.setText(String.valueOf(dataBaseArch.selectCount("", "file")));
+                                                     return false;
+                                                 }
+                                                 searchWithtag(query);
+
+
+                                                 allChipDisabled();
+                                                 chipHome.setChipBackgroundColorResource(R.color.green_pack);
+                                                 chipImage.setText(String.valueOf(dataBaseArch.selectCount(query, "image")));
+                                                 chipVideo.setText(String.valueOf(dataBaseArch.selectCount(query, "video")));
+                                                 chipAudio.setText(String.valueOf(dataBaseArch.selectCount(query, "audio")));
+                                                 chipFile.setText(String.valueOf(dataBaseArch.selectCount(query, "file")));
                                                  return false;
                                              }
                                          });
@@ -274,7 +330,13 @@ public class MainActivity extends AppCompatActivity {
         popupDialog = new Dialog(this);
     }
 
-
+    void allChipDisabled() {
+        chipHome.setChipBackgroundColorResource(R.color.grey);
+        chipImage.setChipBackgroundColorResource(R.color.grey);
+        chipVideo.setChipBackgroundColorResource(R.color.grey);
+        chipAudio.setChipBackgroundColorResource(R.color.grey);
+        chipFile.setChipBackgroundColorResource(R.color.grey);
+    }
     /*******MANAGE THE DATABASE REQUEST*******/
 
     //Load all media
@@ -421,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**LES INTENTS **/
+    /**INTENTS **/
 
     //GALERY INTENTS
     private void galerieIntent(){

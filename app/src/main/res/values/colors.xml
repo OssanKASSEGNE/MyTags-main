@@ -15,4 +15,5 @@
     <color name="yellow_pack">#FFCF00</color>
     <color name="orange_pack">#EE6123</color>
     <color name="red_pack">#FA003F</color>
+    <color name="grey">#949494</color>
 </resources>

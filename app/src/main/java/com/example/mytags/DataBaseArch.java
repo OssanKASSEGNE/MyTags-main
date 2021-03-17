@@ -257,7 +257,11 @@ public  class DataBaseArch extends SQLiteOpenHelper {
         //get data fom database
 
 
-        String queryString = "SELECT DISTINCT COUNT(*) FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE +" LIKE '%" + type + "%'  AND " + COLUMN_TAG +" = '"+tag+"'";
+        String queryString;
+        if(tag.isEmpty())
+            queryString = "SELECT DISTINCT COUNT(*) FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE +" LIKE '%" + type + "%'";
+        else
+            queryString = "SELECT DISTINCT COUNT(*) FROM " + MEDIA_TABLE + " WHERE "+ COLUMN_MEDIA_TYPE +" LIKE '%" + type + "%'  AND " + COLUMN_TAG +" = '"+tag+"'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString,null);
@@ -268,10 +272,10 @@ public  class DataBaseArch extends SQLiteOpenHelper {
                 occurence = cursor.getInt(0);
             }
         cursor.close();
-    }
+        }
 
-    db.close();
-    return occurence;
+        db.close();
+        return occurence;
     }
 
     //Update Tag of a media

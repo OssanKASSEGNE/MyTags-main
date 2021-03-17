@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:background="@drawable/search_layout"
         android:orientation="horizontal"
         android:padding="2px"
@@ -43,6 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:enabled="false"
                     android:gravity="center"
                     android:maxWidth="500dp"
                     android:textAlignment="center"
@@ -103,54 +104,13 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <!-- <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|bottom"
-            android:orientation="horizontal">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_remove"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:gravity="center"
-                android:text=" delete"
-                android:textColor="@color/white"
-                app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/red_pack"
-                app:chipCornerRadius="0dp"
-                app:chipEndPadding="0dp"
-                app:chipIcon="@drawable/ic_delete"
-                app:chipIconTint="@color/white"
-                app:closeIconEndPadding="0dp"
-                app:iconStartPadding="10dp" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:text="editer"
-                android:textColor="@color/white"
-                app:checkedIconEnabled="false"
-                app:chipBackgroundColor="@color/yellow_pack"
-                app:chipCornerRadius="0dp"
-                app:chipEndPadding="0dp"
-                app:chipIcon="@drawable/ic_edit"
-                app:chipIconTint="@color/white"
-                app:closeIconEndPadding="0dp"
-                app:iconStartPadding="10dp" />
-        </LinearLayout> !-->
         </LinearLayout>
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
-        android:layout_marginVertical="10dp"
         android:layout_height="1dp"
+        android:layout_marginVertical="10dp"
         android:layout_weight="1"
         android:background="?android:attr/listDivider" />
 
