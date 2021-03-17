@@ -1,3 +1,46 @@
 <resources>
-    <string name="app_name">APPV3</string>
+    <string name="app_name">MediaManagerV1</string>
+    <string name="no_type">MediaManagerV1</string>
+    <string name="openFileWith">Open with </string>
+    <string name="no_File">No File</string>
+    <string name="saved_Tags">tag(s) saved</string>
+    <string name="delete">Confirm the deletion of the file</string>
+    <string name="accept">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="all_Permission_ok">Received authorizations</string>
+
+    <!-- Popup Tags !-->
+    <string name="set_tag">Set</string>
+    <string name="delete_tag">Delete</string>
+    <string name="tag">Tag</string>
+    <string name="preview_image">Preview image</string>
+
+    <!-- Main Page !-->
+    <string name="filter">Filter :</string>
+    <string name="search">Search</string>
+    <string name="zero_tag">You still haven\'t tagged any media. To do so, click on the \'+\' button</string>
+
+    <!-- Content Description !-->
+    <string name="add_button">Add button</string>
+    <string name="add_from_gallery_button">Add from gallery button</string>
+    <string name="add_audio_button">Add audio button</string>
+    <string name="add_video_button">Add video button</string>
+    <string name="add_photo_button">Add photo button</string>
+
+    <!-- Menu !-->
+    <string name="menu_home">Home</string>
+    <string name="menu_tags">My Tags</string>
+
+    <!-- Toast !-->
+    <string name="media_deleted">Media deleted</string>
+    <string name="tag_updated">Tag updated</string>
+    <string name="no_files_found">No files</string>
+    <string name="file">file</string>
+    <string name="file_saved">file(s) saved</string>
+    <string name="install_file_manager">Please install a file manager</string>
+    <string name="select_audio_file">Please select an audio file</string>
+    <string name="select_document">Please select your document</string>
+    <string name="permission">You need to allow access to all the permissions</string>
+    <string name="added">added</string>
+
 </resources>

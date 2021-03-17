@@ -15,16 +15,16 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_tag"
-            android:layout_width="410dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="50dp"
+            android:layout_marginBottom="100dp"
             android:paddingBottom="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.002"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnAddFile"
@@ -99,7 +99,7 @@
             app:tint="@color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnAddPhotoFromGallery"
+            android:id="@+id/BtnAddFromGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="144dp"
@@ -112,22 +112,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_add_photo_gallery"
             app:tint="@color/white" />
-
-        <EditText
-            android:id="@+id/tag_search_field"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="test"
-            android:ems="10"
-            android:fontFamily="@font/nunito_semibold"
-            android:hint="Rechercher"
-            android:inputType="textPersonName"
-            android:textColor="#999999"
-            app:layout_constraintBottom_toTopOf="@+id/staggered_rv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

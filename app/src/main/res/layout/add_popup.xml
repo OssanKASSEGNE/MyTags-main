@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="400dp"
     android:minWidth="300dp"
-    android:orientation="vertical">
+    android:minHeight="400dp"
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -19,51 +20,54 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
             android:layout_margin="1dp"
+            android:layout_weight="1"
             android:backgroundTint="@color/green_pack"
             android:drawableLeft="@drawable/ic_plus"
             android:drawableTint="@color/white"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="Ajouter" />
+            android:text="@string/set_tag" />
 
         <Button
             android:id="@+id/cancel_popup_button"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:layout_margin="1dp"
+            android:layout_weight="1"
             android:backgroundTint="@color/orange_pack"
             android:drawableLeft="@drawable/ic_cancel"
             android:drawableTint="@color/white"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:layout_gravity="center_vertical"
-            android:text="Annuler" />
+            android:text="@string/cancel" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imagePreview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100px"
         android:layout_weight="1"
-        tools:srcCompat="@tools:sample/avatars"
-        android:scaleType="centerCrop"/>
-
+        android:contentDescription="@string/preview_image"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/mediaTypeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/tag" />
 
     <EditText
         android:id="@+id/textTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_weight="0"
         android:ems="10"
         android:gravity="start|top"
-        android:inputType="textMultiLine" />
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:labelFor="@+id/mediaTypeText" />
 
 </LinearLayout>

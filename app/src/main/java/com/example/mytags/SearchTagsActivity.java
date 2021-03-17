@@ -3,14 +3,10 @@ package com.example.mytags;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.os.Bundle;
-import android.telecom.Call;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,40 +34,8 @@ public class SearchTagsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_tags);
 
-        lstTag = new ArrayList<>();
-
-        lstTag.add( new TagElement("balbla", 5,2,3,5));
-        lstTag.add( new TagElement("test", 52,12,35,51));
-        lstTag.add( new TagElement("vacance", 5,2,3,51));
-        lstTag.add( new TagElement("passport", 5,2,3,15));
-        lstTag.add( new TagElement("document", 5,2,3,55));
-        lstTag.add( new TagElement("meme", 1,52,3,45));
-        lstTag.add( new TagElement("test", 5,2,3,75));
-        lstTag.add( new TagElement("chaton", 5,2,3,5));
-        lstTag.add( new TagElement("balbla", 5,2,3,5));
-        lstTag.add( new TagElement("test", 52,12,35,51));
-        lstTag.add( new TagElement("vacance", 5,2,3,51));
-        lstTag.add( new TagElement("passport", 5,2,3,15));
-        lstTag.add( new TagElement("document", 5,2,3,55));
-        lstTag.add( new TagElement("meme", 1,52,3,45));
-        lstTag.add( new TagElement("test", 5,2,3,75));
-        lstTag.add( new TagElement("chaton", 5,2,3,5));
-        lstTag.add( new TagElement("balbla", 5,2,3,5));
-        lstTag.add( new TagElement("test", 52,12,35,51));
-        lstTag.add( new TagElement("vacance", 5,2,3,51));
-        lstTag.add( new TagElement("passport", 5,2,3,15));
-        lstTag.add( new TagElement("document", 5,2,3,55));
-        lstTag.add( new TagElement("meme", 1,52,3,45));
-        lstTag.add( new TagElement("test", 5,2,3,75));
-        lstTag.add( new TagElement("chaton", 5,2,3,5));
-        lstTag.add( new TagElement("balbla", 5,2,3,5));
-        lstTag.add( new TagElement("test", 52,12,35,51));
-        lstTag.add( new TagElement("vacance", 5,2,3,51));
-        lstTag.add( new TagElement("passport", 5,2,3,15));
-        lstTag.add( new TagElement("document", 5,2,3,55));
-        lstTag.add( new TagElement("meme", 1,52,3,45));
-        lstTag.add( new TagElement("test", 5,2,3,75));
-        lstTag.add( new TagElement("chaton", 5,2,3,5));
+        lstTag = recapTags(uniqueTags());
+       // uniqueTags();
 
         mResultList = findViewById(R.id.list_tag);
         manager = new LinearLayoutManager(this);
@@ -115,5 +79,43 @@ public class SearchTagsActivity extends AppCompatActivity {
 
 
 
+    }
+
+    //Load Unique tags
+    private List<String> uniqueTags(){
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(this);
+        List<String> tags;
+        tags = dataBaseArch.selectTags();
+        if(tags.size() ==0){
+            Util.showMessage(this,this.getString(R.string.no_File));
+        }else{
+            Util.showMessage(this,tags.size()+" "+this.getString(R.string.saved_Tags));
+        }
+
+        return  tags;
+    }
+
+    private List<TagElement> recapTags(List<String> tags){
+
+        List<TagElement> tagElementList = new ArrayList<>();
+        //1- create database helper object
+        DataBaseArch dataBaseArch = new DataBaseArch(this);
+        for(String tag : tags){
+            //2- CreateTagElement
+            tagElementList.add(new TagElement(tag,dataBaseArch.selectCount(tag,"image"),dataBaseArch.selectCount(tag,"video"),dataBaseArch.selectCount(tag,"audio"),dataBaseArch.selectCount(tag,"file")));
+
+
+        }
+        List<Media> medias = dataBaseArch.selectAll();
+
+       /* for (TagElement tag : tagElementList ){
+            Util.showMessage(this,tag.getTag()+" "+tag.getCountAudio()+" "+tag.getCountFile()+" "+tag.getCountPhoto()+" "+tag.getCountVideo());
+        }*/
+
+        for(Media m : medias){
+            Log.d("AllS",m.getMediaType()+" "+m.getFileUri()+" "+m.getTag()+" "+m.getImageUri()+" "+m.getId());
+        }
+        return tagElementList;
     }
 }

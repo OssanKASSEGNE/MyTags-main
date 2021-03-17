@@ -21,8 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
             android:maxWidth="200dp"
-            app:chipBackgroundColor="@color/beige_pack"
-            android:text="tag" />
+            app:chipBackgroundColor="@color/beige_pack"/>
 
 
         <LinearLayout
@@ -41,19 +40,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_add_photo_gallery"
                     android:fontFamily="@font/nunito_semibold"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp"
+                    app:drawableEndCompat="@drawable/ic_add_photo_gallery" />
 
                 <TextView
                     android:id="@+id/nb_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="0"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -65,19 +63,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_add_video_gallery"
                     android:fontFamily="@font/nunito_semibold"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp"
+                    app:drawableEndCompat="@drawable/ic_add_video_gallery" />
 
                 <TextView
                     android:id="@+id/nb_video"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="0"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
 
@@ -90,19 +87,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_add_audio"
                     android:fontFamily="@font/nunito_semibold"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp"
+                    app:drawableEndCompat="@drawable/ic_add_audio" />
 
                 <TextView
                     android:id="@+id/nb_audio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="0"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -114,19 +110,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_add_file"
                     android:fontFamily="@font/nunito_semibold"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp"
+                    app:drawableEndCompat="@drawable/ic_add_file" />
 
                 <TextView
                     android:id="@+id/nb_file"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="0"
                     android:textColor="#555555"
-                    android:textSize="10dp" />
+                    android:textSize="12sp" />
 
             </LinearLayout>
         </LinearLayout>
@@ -135,7 +130,6 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_weight="1"
