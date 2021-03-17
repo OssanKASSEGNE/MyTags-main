@@ -31,7 +31,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
@@ -71,7 +70,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text=" delete"
+                            android:text="@string/delete_tag"
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             app:checkedIconEnabled="false"
@@ -89,7 +88,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="editer"
+                            android:text="@string/set_tag"
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             app:checkedIconEnabled="false"

@@ -140,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
             if(result[1].equals("DELETE_TAG")){
                 deleteSelected(result[0]);
                 //refresh
-                Util.showMessage(this,"Media deleted");
+                Util.showMessage(this, getString(R.string.media_deleted));
                 loadAllMedia();
             }
             //Update a tag
             if(result[1].equals("UPDATE_TAG")){
                 updateTag(result[0],result[2]);
                 //refresh
-                Util.showMessage(this,"Tag updated");
+                Util.showMessage(this,getString(R.string.tag_updated));
                 loadAllMedia();
             }
         }else{
@@ -416,9 +416,9 @@ public class MainActivity extends AppCompatActivity {
         List<Media> liste = new ArrayList<>(mediaAll);
         Integer numberElements = liste.size();
         if(numberElements == 0){
-            Util.showMessage(MainActivity.this,"Aucun Fichier Trouvé");
+            Util.showMessage(MainActivity.this,getString(R.string.no_files_found));
         }else{
-            Util.showMessage(MainActivity.this,numberElements.toString() + " fichiers");
+            Util.showMessage(MainActivity.this,numberElements.toString() + " " + getString(R.string.file));
         }
         //4- affichage
         updateActivity(R.id.staggered_rv,liste);
@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, message), FILE_SELECT_CODE);
         } catch (android.content.ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
-            Util.showMessage(MainActivity.this,"Installer un FileManager");
+            Util.showMessage(MainActivity.this,getString(R.string.install_file_manager));
         }
     }
 
@@ -560,12 +560,12 @@ public class MainActivity extends AppCompatActivity {
 
     //Choose audio file
     private void audioIntent(){
-        fileIntent("audio/*",REQUEST_AUDIO,"Sélectionner le fichier audio !");
+        fileIntent("audio/*",REQUEST_AUDIO,getString(R.string.select_audio_file));
     }
 
     //Choose choose document
     private void documentIntent(){
-        fileIntent("application/*|text/*",REQUEST_DOCUMENT,"Sélectionner le document !");
+        fileIntent("application/*|text/*",REQUEST_DOCUMENT,getString(R.string.select_document));
     }
 
 
@@ -660,7 +660,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-                                showMessageOKCancel("You need to allow access to all the permissions",
+                                showMessageOKCancel(getString(R.string.permission),
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -690,12 +690,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new StaggeredRecyclerAdapter(MainActivity.this, listeRow);
         staggeredRv.setAdapter(adapter);
         if(listeRow.size() == 0){
-            Util.showMessage(this,"No files");
+            Util.showMessage(this,getString(R.string.no_files_found));
         }else{
-            Util.showMessage(this,listeRow.size()+" file(s) saved");
+            Util.showMessage(this,listeRow.size()+ getString(R.string.file_saved));
         }
-
-
     }
 
     //Create a photo and Update activity on Request
@@ -737,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
                 //insert
                 boolean success = dataBaseArch.addOne(mediaModel);
                 if(success){
-                   Util.showMessage(MainActivity.this,"Tag : "+currentTag+" Ajouté");
+                   Util.showMessage(MainActivity.this,getString(R.string.tag) + " : "+currentTag + " " + getString(R.string.added));
                 }
                 popupDialog.dismiss();
                 loadAllMedia();
@@ -751,8 +749,8 @@ public class MainActivity extends AppCompatActivity {
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(getString(R.string.accept), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .create()
                 .show();
     }
