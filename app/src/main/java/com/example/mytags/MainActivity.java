@@ -286,7 +286,10 @@ public class MainActivity extends AppCompatActivity {
         //3 - Create List of media to shows
         List<Media> liste = new ArrayList<>(mediaAll);
         //4- affichage
-        updateActivity(R.id.staggered_rv,liste);
+        no_tag_text = (TextView) findViewById(R.id.no_tag_error);
+        if(liste.isEmpty()) no_tag_text.setVisibility(View.VISIBLE);
+        else no_tag_text.setVisibility(View.INVISIBLE);
+        updateActivity(R.id.staggered_rv, liste);
     }
 
     //Load all images from database
@@ -629,9 +632,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Util.showMessage(this,listeRow.size()+" file(s) saved");
         }
-        no_tag_text = (TextView) findViewById(R.id.no_tag_error);
-        if(currentList.isEmpty()) no_tag_text.setVisibility(View.VISIBLE);
-        else no_tag_text.setVisibility(View.INVISIBLE);
+
 
     }
 

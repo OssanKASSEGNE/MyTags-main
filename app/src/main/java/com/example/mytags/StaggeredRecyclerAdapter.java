@@ -82,11 +82,11 @@ public class StaggeredRecyclerAdapter extends RecyclerView.Adapter<StaggeredRecy
                 icon = R.drawable.ic_photo;
                 break;
             case "video":
-                color = R.color.yellow_pack;
+                color = R.color.colorPrimary;
                 icon = R.drawable.ic_video;
                 break;
             case "audio":
-                color = R.color.red_pack;
+                color = R.color.design_default_color_secondary_variant;
                 icon = R.drawable.ic_add_audio;
                 break;
             case "file":
