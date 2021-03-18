@@ -131,25 +131,27 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras!=null) {
             String value = extras.getString("value");
-            String [] result = value.split(" ");
-            //if code is Tag => use value to search Tag
-            if(result[1].equals("SEARCH_TAG")){
-                searchWithtag(result[0]);
-                Log.d("res", result[0]);
-            }
-            //delete the file via Uri sent from adapter
-            if(result[1].equals("DELETE_TAG")){
-                deleteSelected(result[0]);
-                //refresh
-                Util.showMessage(this, getString(R.string.media_deleted));
-                loadAllMedia();
-            }
-            //Update a tag
-            if(result[1].equals("UPDATE_TAG")){
-                updateTag(result[0],result[2]);
-                //refresh
-                Util.showMessage(this,getString(R.string.tag_updated));
-                loadAllMedia();
+            if(value != null) {
+                String[] result = value.split(" ");
+                //if code is Tag => use value to search Tag
+                if (result[1].equals("SEARCH_TAG")) {
+                    searchWithtag(result[0]);
+                    Log.d("res", result[0]);
+                }
+                //delete the file via Uri sent from adapter
+                if (result[1].equals("DELETE_TAG")) {
+                    deleteSelected(result[0]);
+                    //refresh
+                    Util.showMessage(this, getString(R.string.media_deleted));
+                    loadAllMedia();
+                }
+                //Update a tag
+                if (result[1].equals("UPDATE_TAG")) {
+                    updateTag(result[0], result[2]);
+                    //refresh
+                    Util.showMessage(this, getString(R.string.tag_updated));
+                    loadAllMedia();
+                }
             }
         }else{
             //Load all Media on create()
@@ -326,8 +328,6 @@ public class MainActivity extends AppCompatActivity {
                                                  return false;
                                              }
                                          });
-
-
         popupDialog = new Dialog(this);
     }
 
@@ -607,7 +607,15 @@ public class MainActivity extends AppCompatActivity {
         //Back from fileExplorer
         if (requestCode == REQUEST_DOCUMENT && resultCode == RESULT_OK) {
             documentUri = data.getData();
-            imageUri = Uri.parse("android.resource://com.example.mytags/drawable/document");
+            if(getMimeType(MainActivity.this, documentUri).contains("pdf")){
+                imageUri = Uri.parse("android.resource://com.example.mytags/drawable/pdf");
+            }else if((getMimeType(MainActivity.this, documentUri).contains("zip"))){
+                imageUri = Uri.parse("android.resource://com.example.mytags/drawable/zip");
+            }else if(getMimeType(MainActivity.this, documentUri).contains("apk")){
+                imageUri = Uri.parse("android.resource://com.example.mytags/drawable/apk");
+            }else{
+                imageUri = Uri.parse("android.resource://com.example.mytags/drawable/document");
+            }
             fullRequest(R.id.staggered_rv,imageUri,documentUri, currentList,"file");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 MainActivity.this.getContentResolver().takePersistableUriPermission(documentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -727,6 +735,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 currentTag = editTextTag.getText().toString();
+                if(currentTag.isEmpty()) currentTag = "no tag";
                 Media mediaModel;
 
                 mediaModel = new  Media(-1,imageUri.toString(),fileUri.toString(),mediaType, currentTag);

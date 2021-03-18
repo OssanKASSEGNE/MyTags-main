@@ -8,25 +8,36 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingVertical="2dp"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="start"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="2dp"
+        android:weightSum="2">
 
         <com.google.android.material.chip.Chip
+            android:gravity="center"
+            android:textAlignment="center"
             android:id="@+id/chip_tag"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
             android:maxWidth="200dp"
-            app:chipBackgroundColor="@color/beige_pack"/>
+            app:chipBackgroundColor="@color/beige_pack" />
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="right"
             android:orientation="horizontal">
 
@@ -129,11 +140,6 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_weight="1"
-        android:background="?android:attr/listDivider" />
 
 
 </LinearLayout>

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">MediaManagerV1</string>
-    <string name="no_type">MediaManagerV1</string>
+    <string name="app_name">MyTags</string>
+    <string name="no_type">MyTags</string>
     <string name="openFileWith">Open with </string>
     <string name="no_File">No File</string>
     <string name="saved_Tags">tag(s) saved</string>
