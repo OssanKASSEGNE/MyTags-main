@@ -4,7 +4,11 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +50,13 @@ public class StaggeredRecyclerAdapter extends RecyclerView.Adapter<StaggeredRecy
         //Get the media
         Media media = mdata.get(position);
         //Load the media Uri into the ImageView
-        holder.img.setImageURI(Uri.parse(media.getImageUri()));
+        if(media.getMediaType().equals("video")){
+            Bitmap thumbnail_bitmap = createThumbnail(mContext, media.getFileUri());
+            holder.img.setImageBitmap(thumbnail_bitmap);
+        }else{
+            holder.img.setImageURI(Uri.parse(media.getImageUri()));
+        }
+
         //Load OnClick event into the ImageView
         holder.img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,6 +218,22 @@ public class StaggeredRecyclerAdapter extends RecyclerView.Adapter<StaggeredRecy
             e.printStackTrace();
         }
     }
-
+    //Create Thumbnails
+    public static Bitmap createThumbnail(Context context, String path) {
+        MediaMetadataRetriever mediaMetadataRetriever = null;
+        Bitmap bitmap = null;
+        try {
+            mediaMetadataRetriever = new MediaMetadataRetriever();
+            mediaMetadataRetriever.setDataSource(context, Uri.parse(path));
+            bitmap = mediaMetadataRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (mediaMetadataRetriever != null) {
+                mediaMetadataRetriever.release();
+            }
+        }
+        return bitmap;
+    }
 
 }

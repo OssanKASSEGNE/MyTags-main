@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             //if code is Tag => use value to search Tag
             if(result[1].equals("SEARCH_TAG")){
                 searchWithtag(result[0]);
+                Log.d("res", result[0]);
             }
             //delete the file via Uri sent from adapter
             if(result[1].equals("DELETE_TAG")){
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        chipHome.callOnClick();
+       chipHome.callOnClick();
 
 
         //SearchBar implementation
@@ -420,8 +421,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Util.showMessage(MainActivity.this,numberElements.toString() + " " + getString(R.string.file));
         }
-        //4- affichage
+        //4- Refresh
         updateActivity(R.id.staggered_rv,liste);
+
     }
 
     //Delete All entries
